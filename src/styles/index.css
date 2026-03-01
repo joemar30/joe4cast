@@ -50,6 +50,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -60,6 +61,7 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 a {
@@ -161,4 +163,18 @@ img {
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
+}
+
+@media (max-width: 850px) {
+  .rows-container {
+    padding: 1rem 1rem 2.5rem;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .rows-container {
+    padding: 1rem 0.75rem 2.5rem;
+    gap: 1.25rem;
+  }
 }
