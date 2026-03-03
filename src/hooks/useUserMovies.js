@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, increment } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from '../context/AuthContext';
 
@@ -7,12 +7,14 @@ export const useUserMovies = () => {
     const { currentUser } = useAuth();
     const [watchlist, setWatchlist] = useState([]);
     const [continueWatching, setContinueWatching] = useState([]);
+    const [totalWatchTime, setTotalWatchTime] = useState(0);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (!currentUser) {
             setWatchlist([]);
             setContinueWatching([]);
+            setTotalWatchTime(0);
             setLoading(false);
             return;
         }
@@ -26,6 +28,8 @@ export const useUserMovies = () => {
                     const data = userSnap.data();
                     setWatchlist(data.watchlist || []);
                     setContinueWatching(data.continueWatching || []);
+                    // Stored in seconds; format string expects minutes, we'll convert dynamically when rendering
+                    setTotalWatchTime(data.totalWatchTime || 0);
                 }
             } catch (error) {
                 console.error("Error fetching user movies:", error);
@@ -138,12 +142,25 @@ export const useUserMovies = () => {
         }
     };
 
+    const addWatchTime = async (seconds) => {
+        if (!currentUser || typeof seconds !== 'number' || seconds <= 0) return;
+        try {
+            const userRef = doc(db, 'users', currentUser.uid);
+            await setDoc(userRef, { totalWatchTime: increment(seconds) }, { merge: true });
+            setTotalWatchTime(prev => prev + seconds);
+        } catch (error) {
+            console.error("Error updating watch time:", error);
+        }
+    };
+
     return {
         watchlist,
         continueWatching,
+        totalWatchTime,
         loading,
         isWatchlisted,
         toggleWatchlist,
-        addToContinueWatching
+        addToContinueWatching,
+        addWatchTime
     };
 };

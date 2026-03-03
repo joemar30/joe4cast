@@ -39,7 +39,10 @@ const Play = () => {
     const [playerError, setPlayerError] = useState(false);
     const [showSlowWarning, setShowSlowWarning] = useState(false);
     const slowTimer = useRef(null);
-    const { addToContinueWatching } = useUserMovies();
+    const { addToContinueWatching, addWatchTime } = useUserMovies();
+
+    /* ── Tracking watch time ── */
+    const watchStartTime = useRef(null);
 
     /* ── TV-only state ── */
     const [seasons, setSeasons] = useState([]);           // list of season objects from TMDB
@@ -102,14 +105,38 @@ const Play = () => {
         setPlayerError(false);
         setShowSlowWarning(false);
         clearTimeout(slowTimer.current);
+
+        // Reset tracking timer when embed URL changes
+        watchStartTime.current = null;
+
         slowTimer.current = setTimeout(() => setShowSlowWarning(true), 10000);
         return () => clearTimeout(slowTimer.current);
     }, [embedUrl]);
+
+    // Timer logic on mount/unmount context
+    useEffect(() => {
+        return () => {
+            // When user navigates away or unmounts, report the accumulated time
+            if (watchStartTime.current) {
+                const endTime = Date.now();
+                const durationSeconds = Math.floor((endTime - watchStartTime.current) / 1000);
+                if (durationSeconds > 0) {
+                    addWatchTime(durationSeconds);
+                }
+                watchStartTime.current = null;
+            }
+        };
+    }, []);
 
     const handleLoad = () => {
         setPlayerReady(true);
         setShowSlowWarning(false);
         clearTimeout(slowTimer.current);
+
+        // Start timing once the player iframe actually loads!
+        if (!watchStartTime.current) {
+            watchStartTime.current = Date.now();
+        }
     };
 
     /* ── Auto-next episode ── */
