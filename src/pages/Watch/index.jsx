@@ -74,7 +74,7 @@ const Watch = () => {
                                     <MovieLogo
                                         tmdbId={movieMeta.id || id}
                                         title={displayTitle}
-                                        maxHeight="60px"
+                                        maxHeight="100px"
                                         type={type}
                                     />
                                 </h1>

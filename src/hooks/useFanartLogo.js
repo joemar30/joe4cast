@@ -14,12 +14,15 @@
  */
 
 import { useState, useEffect } from 'react';
+import { TMDB_API_KEY, TMDB_BASE_URL } from '@/config/constants';
 
 const FANART_API_KEY = import.meta.env.VITE_FANART_API_KEY;
 
 // In dev, Vite proxies /fanart-api → webservice.fanart.tv/v3 (bypasses CORS)
 // In production, you'd need your own proxy or a serverless function
 const FANART_BASE = '/fanart-api';
+const TMDB_IMAGE_ORIGINAL_BASE = 'https://image.tmdb.org/t/p/original';
+const LOGO_CACHE_VERSION = 'v2';
 
 // ── In-memory cache so we never fetch the same movie twice ──
 const logoCache = {};
@@ -34,7 +37,8 @@ const useFanartLogo = (tmdbId, type = 'movie') => {
             return;
         }
 
-        const cacheKey = `${type}_${tmdbId}`;
+        const mediaType = type === 'tv' ? 'tv' : 'movie';
+        const cacheKey = `${LOGO_CACHE_VERSION}_${mediaType}_${tmdbId}`;
 
         // Check cache first
         if (logoCache[cacheKey] !== undefined) {
@@ -48,7 +52,7 @@ const useFanartLogo = (tmdbId, type = 'movie') => {
         const fetchLogo = async () => {
             setLoading(true);
             try {
-                const endpoint = type === 'tv' ? 'tv' : 'movies';
+                const endpoint = mediaType === 'tv' ? 'tv' : 'movies';
                 const res = await fetch(
                     `${FANART_BASE}/${endpoint}/${tmdbId}?api_key=${FANART_API_KEY}`
                 );
@@ -70,8 +74,39 @@ const useFanartLogo = (tmdbId, type = 'movie') => {
                     return pool[0]?.url || null;
                 };
 
-                logo = pickBest(data.hdmovielogo) || pickBest(data.hdtvlogo);
-                if (!logo) logo = pickBest(data.movielogo) || pickBest(data.clearlogo);
+                if (mediaType === 'tv') {
+                    logo = pickBest(data.hdtvlogo) || pickBest(data.tvlogo) || pickBest(data.clearlogo);
+                } else {
+                    logo = pickBest(data.hdmovielogo) || pickBest(data.movielogo) || pickBest(data.clearlogo);
+                }
+
+                // Fallback to TMDB logos when fanart has no title logo for this item.
+                if (!logo && TMDB_API_KEY) {
+                    const tmdbPath = mediaType === 'tv' ? 'tv' : 'movie';
+                    const tmdbUrl =
+                        `${TMDB_BASE_URL}/${tmdbPath}/${tmdbId}/images` +
+                        `?api_key=${TMDB_API_KEY}&include_image_language=en,null`;
+
+                    const tmdbRes = await fetch(tmdbUrl);
+                    if (tmdbRes.ok) {
+                        const tmdbData = await tmdbRes.json();
+                        const logos = Array.isArray(tmdbData.logos) ? [...tmdbData.logos] : [];
+
+                        const preferred = logos.filter(l => l.iso_639_1 === 'en' || l.iso_639_1 === null);
+                        const pool = preferred.length > 0 ? preferred : logos;
+
+                        pool.sort((a, b) => {
+                            const scoreA = Number(a.vote_count || 0) * 10 + Number(a.vote_average || 0);
+                            const scoreB = Number(b.vote_count || 0) * 10 + Number(b.vote_average || 0);
+                            return scoreB - scoreA;
+                        });
+
+                        const bestLogoPath = pool[0]?.file_path;
+                        if (bestLogoPath) {
+                            logo = `${TMDB_IMAGE_ORIGINAL_BASE}${bestLogoPath}`;
+                        }
+                    }
+                }
 
                 // Cache the result (even null, to avoid retrying)
                 logoCache[cacheKey] = logo;
@@ -79,7 +114,7 @@ const useFanartLogo = (tmdbId, type = 'movie') => {
                 if (!cancelled) {
                     setLogoUrl(logo);
                 }
-            } catch (err) {
+            } catch {
                 // Cache null on error to prevent hammering the API
                 logoCache[cacheKey] = null;
                 if (!cancelled) {
