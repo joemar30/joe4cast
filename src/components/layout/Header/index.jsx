@@ -32,6 +32,7 @@ const Header = () => {
                         src={currentUser.photoURL || `https://ui-avatars.com/api/?name=${currentUser.email}&background=random`}
                         alt={currentUser.displayName || 'User Profile'}
                         className="topbar__user-avatar"
+                        referrerPolicy="no-referrer"
                     />
 
                     <div className="topbar__user-dropdown">
