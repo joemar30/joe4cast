@@ -5,11 +5,12 @@ import Footer from '@/components/layout/Footer';
 import MovieCard from '@/components/common/MovieCard';
 import { useUserMovies } from '@/hooks/useUserMovies';
 import { useNavigate } from 'react-router-dom';
+import { formatWatchTime } from '@/utils/timeUtils';
 import './styles.css';
 
 const Profile = () => {
     const { currentUser } = useAuth();
-    const { watchlist, continueWatching } = useUserMovies();
+    const { watchlist, continueWatching, totalWatchTime } = useUserMovies();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('profile');
 
@@ -52,7 +53,11 @@ const Profile = () => {
                                 </div>
                                 <div className="profile-info-item">
                                     <span className="profile-info-label">JOINED ON</span>
-                                    <span className="profile-info-value">January 18, 2026</span>
+                                    <span className="profile-info-value">{currentUser?.metadata?.creationTime ? new Date(currentUser.metadata.creationTime).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'January 18, 2026'}</span>
+                                </div>
+                                <div className="profile-info-item">
+                                    <span className="profile-info-label">TIME SPENT WATCHING</span>
+                                    <span className="profile-info-value">{formatWatchTime((totalWatchTime || 0) / 60)}</span>
                                 </div>
                             </div>
                         </div>
