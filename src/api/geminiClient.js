@@ -1,6 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { collection, query as firestoreQuery, where, getDocs, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import { stopWords } from "../utils/stopWords";
+import { db } from "../firebase";
 
 const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 const modelLLM = import.meta.env.VITE_GEMINI_MODEL;
@@ -19,16 +21,7 @@ export const normalizeSearchQuery = (query) => {
     // 2. Remove punctuation (keep only alphanumeric and spaces)
     normalized = normalized.replace(/[^\w\s]|_/g, "").replace(/\s+/g, " ");
 
-    // 3. Remove common stop words
-    const stopWords = new Set([
-        "a", "an", "and", "are", "as", "at", "be", "but", "by", "for",
-        "if", "in", "into", "is", "it", "no", "not", "of", "on", "or",
-        "such", "that", "the", "their", "then", "there", "these", "they",
-        "this", "to", "was", "will", "with", "has", "have", "had", "him",
-        "her", "he", "she", "who", "which", "what", "where", "when", "why",
-        "how", "all", "any", "both", "each", "few", "more", "most", "other",
-        "some", "such", "than", "too", "very", "can", "will", "just", "should", "now"
-    ]);
+    // 3. Remove common stop words (imported from utils)
 
     // Split into words, filter out stop words, and sort alphabetically
     const words = normalized.split(" ").filter(word => word.length > 0 && !stopWords.has(word));
