@@ -1,0 +1,42 @@
+/* Chroma Theme (Animated) */
+[data-theme="chroma"] {
+    --c-bg: #000000;
+    --c-bg2: #050505;
+    --c-surface: #0f100f;
+    --c-surface2: #141514;
+    --c-surface3: #1a1b1a;
+
+    --c-border: rgba(68, 214, 44, 0.15);
+    --c-border2: rgba(68, 214, 44, 0.3);
+
+    --c-accent: #44d62c;
+    --c-accent-lt: #88ff77;
+    --c-accent-glow: rgba(68, 214, 44, 0.4);
+
+    --c-text: #ffffff;
+    --c-text2: #888888;
+}
+
+/* Ambient Gamer Lighting */
+[data-theme="chroma"]::before {
+    content: "";
+    display: block;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    width: 200vmax;
+    height: 200vmax;
+    background-image: conic-gradient(from 0deg, #ff0000, #00ff00, #0000ff, #ff0000);
+    background-size: 100% 100%;
+    filter: blur(120px);
+    z-index: -2;
+    animation: chroma-spin 60s linear infinite;
+    opacity: 0.15;
+}
+
+@keyframes chroma-spin {
+    100% {
+        transform: rotate(1turn);
+    }
+}
