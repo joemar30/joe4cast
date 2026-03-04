@@ -1,0 +1,17 @@
+/* Nord Theme */
+[data-theme="nord"] {
+    --c-bg: #2e3440;
+    --c-bg2: #353b49;
+    --c-surface: #3b4252;
+    --c-surface2: #434c5e;
+    --c-surface3: #4c566a;
+    --c-border: rgba(136, 192, 208, 0.05);
+    --c-border2: rgba(136, 192, 208, 0.1);
+
+    --c-accent: #88c0d0;
+    --c-accent-lt: #81a1c1;
+    --c-accent-glow: rgba(136, 192, 208, 0.4);
+
+    --c-text: #eceff4;
+    --c-text2: #d8dee9;
+}
