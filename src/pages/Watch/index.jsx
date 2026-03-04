@@ -12,6 +12,7 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import MovieRow from '@/components/layout/MovieRow';
 import MovieLogo from '@/components/common/MovieLogo';
+import CollectionGrid from '@/components/layout/CollectionGrid';
 import Footer from '@/components/layout/Footer';
 import { useMovieDetail } from '@/hooks/useMovieDetail';
 import { useUserMovies } from '@/hooks/useUserMovies';
@@ -136,6 +137,12 @@ const Watch = () => {
                     </div>
                 </section>
 
+                {/* ═══════════════════════════════════════════════
+                    COLLECTION FRANCHISE GRID (If Applicable)
+                ═══════════════════════════════════════════════ */}
+                {movieMeta?.belongs_to_collection && (
+                    <CollectionGrid collectionId={movieMeta.belongs_to_collection.id} />
+                )}
 
                 {/* ═══════════════════════════════════════════════
                     SIMILAR MOVIES
