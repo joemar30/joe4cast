@@ -13,6 +13,7 @@
     "@google/generative-ai": "^0.24.1",
     "@tanstack/react-query": "^5.90.21",
     "firebase": "^12.9.0",
+    "lucide-react": "^0.576.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.0"
