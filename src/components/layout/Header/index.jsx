@@ -123,32 +123,19 @@ const Header = () => {
                         </div>
 
                         <div className="dropdown-menu">
-                            <button className="dropdown-item" onClick={() => { navigate('/profile'); setIsMobileMenuOpen(false); }}>
+                            <button className="dropdown-item" onClick={() => { setIsMobileMenuOpen(false); navigate('/profile'); setTimeout(() => window.scrollTo(0, 0), 0); }}>
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                                     <circle cx="12" cy="7" r="4" />
                                 </svg>
                                 Profile
                             </button>
-                            <button className="dropdown-item" onClick={() => { navigate('/profile'); setIsMobileMenuOpen(false); }}>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <polyline points="12 6 12 12 16 14" />
-                                </svg>
-                                Continue Watching
-                            </button>
-                            <button className="dropdown-item" onClick={() => { navigate('/settings'); setIsMobileMenuOpen(false); }}>
+                            <button className="dropdown-item" onClick={() => { setIsMobileMenuOpen(false); navigate('/settings'); }}>
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <circle cx="12" cy="12" r="3" />
                                     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
                                 </svg>
                                 Settings
-                            </button>
-                            <button className="dropdown-item" onClick={() => { navigate('/profile'); setIsMobileMenuOpen(false); }}>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                                </svg>
-                                Watch List
                             </button>
                         </div>
 
@@ -194,36 +181,39 @@ const Header = () => {
                         <nav className={`topbar__nav ${isMobileMenuOpen ? 'mobile-open' : ''}`} aria-label="Site Navigation">
                             <div className="topbar__nav-links">
                                 {[
-                                    { label: 'Home', hash: '' },
-                                    { label: 'Trending', hash: 'trending' },
-                                    { label: 'Top Rated', hash: 'top-rated' },
-                                    { label: 'Mood Match', hash: 'mood-match' },
-                                    { label: 'Action & Adventure', hash: 'action' },
-                                    { label: 'Drama', hash: 'drama' },
-                                    { label: 'New Release', hash: 'new-release' },
+                                    { label: 'Home', hash: '', path: '/' },
+                                    { label: 'Trending', hash: 'trending', path: '/' },
+                                    { label: 'Top Rated', hash: 'top-rated', path: '/' },
+                                    { label: 'New & Popular', hash: 'new-release', path: '/' },
+                                    { label: 'Taste Matcher', hash: '', path: '/ai-match' },
                                 ].map(link => {
-                                    const isHomeActive = location.pathname === '/' && !location.hash && !link.hash;
-                                    const isHashActive = location.pathname === '/' && location.hash === `#${link.hash}`;
-                                    const isActive = isHomeActive || isHashActive;
+                                    const isHomeActive = location.pathname === '/' && !location.hash && !link.hash && link.path === '/';
+                                    const isHashActive = location.pathname === '/' && location.hash === `#${link.hash}` && link.path === '/';
+                                    const isPathActive = location.pathname === link.path && link.path !== '/';
+                                    const isActive = isHomeActive || isHashActive || isPathActive;
 
                                     return (
                                         <button
                                             key={link.label}
-                                            className={`topbar__nav-link ${isActive ? 'active' : ''}`}
+                                            className={`topbar__nav-link ${isActive ? 'active' : ''} ${link.isSpecial ? 'special-link' : ''}`}
                                             onClick={() => {
-                                                if (location.pathname !== '/') {
-                                                    navigate(link.hash ? `/#${link.hash}` : '/');
+                                                if (link.path !== '/') {
+                                                    navigate(link.path);
                                                 } else {
-                                                    if (!link.hash) {
-                                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                                        navigate('/');
+                                                    if (location.pathname !== '/') {
+                                                        navigate(link.hash ? `/#${link.hash}` : '/');
                                                     } else {
-                                                        const element = document.getElementById(link.hash);
-                                                        if (element) {
-                                                            const y = element.getBoundingClientRect().top + window.scrollY - 80;
-                                                            window.scrollTo({ top: y, behavior: 'smooth' });
+                                                        if (!link.hash) {
+                                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                            navigate('/');
+                                                        } else {
+                                                            const element = document.getElementById(link.hash);
+                                                            if (element) {
+                                                                const y = element.getBoundingClientRect().top + window.scrollY - 80;
+                                                                window.scrollTo({ top: y, behavior: 'smooth' });
+                                                            }
+                                                            navigate(`/#${link.hash}`);
                                                         }
-                                                        navigate(`/#${link.hash}`);
                                                     }
                                                 }
                                                 setIsMobileMenuOpen(false); // Close menu on click

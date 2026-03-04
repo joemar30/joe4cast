@@ -36,7 +36,7 @@
     height: 22px;
     width: auto;
     object-fit: contain;
-    filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.3));
+    filter: drop-shadow(0 0 8px var(--c-accent-glow));
 }
 
 .footer-logo__text {
@@ -44,14 +44,18 @@
     font-weight: 900;
     letter-spacing: 0.08em;
     line-height: 1;
+    background: linear-gradient(135deg, var(--c-accent), var(--c-accent-lt));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .footer-logo__vibe {
-    color: var(--c-text);
+    /* Kept for structural purposes if needed, colors handled by parent gradient */
 }
 
 .footer-logo__o {
-    color: var(--c-accent-lt);
+    /* Kept for structural purposes if needed, colors handled by parent gradient */
 }
 
 .footer-divider {

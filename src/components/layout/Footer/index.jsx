@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import './styles.css';
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -65,9 +65,9 @@ const Footer = () => {
 
                 {/* ── Links row ── */}
                 <div className="footer-links">
-                    <a href="/terms">Terms of Service</a>
-                    <a href="/dmca">DMCA</a>
-                    <a href="/contact">Contact</a>
+                    <Link to="/terms">Terms of Service</Link>
+                    <Link to="/privacy">Privacy Policy</Link>
+                    <Link to="/cookies">Cookie Preferences</Link>
                     <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">TMDB</a>
                 </div>
 
