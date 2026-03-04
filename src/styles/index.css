@@ -18,6 +18,19 @@
 @import "./themes/forest.css";
 @import "./themes/midnight.css";
 @import "./themes/rose.css";
+@import "./themes/coffee.css";
+@import "./themes/aurora.css";
+@import "./themes/abyss.css";
+@import "./themes/cyberwire.css";
+@import "./themes/sunset.css";
+@import "./themes/light.css";
+@import "./themes/oled.css";
+@import "./themes/nord.css";
+@import "./themes/dracula.css";
+@import "./themes/slate.css";
+@import "./themes/terminal.css";
+@import "./themes/animated.css";
+@import "./patterns.css";
 
 :root {
   /* Common */
@@ -35,7 +48,28 @@
   --c-green: #22c55e;
   --c-red: #ef4444;
   --c-blue: #3b82f6;
+
+  /* Layout Preferences (Defaults) */
+  --card-min-width: 140px;
+  --glass-blur: blur(0px);
 }
+
+body[data-card-size="small"] {
+  --card-min-width: 110px;
+}
+
+body[data-card-size="large"] {
+  --card-min-width: 170px;
+}
+
+body[data-glass-level="subtle"] {
+  --glass-blur: blur(8px);
+}
+
+body[data-glass-level="glassy"] {
+  --glass-blur: blur(16px);
+}
+
 
 /* ================================================================
    BASE RESET
