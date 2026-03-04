@@ -24,7 +24,10 @@ export const normalizeSearchQuery = (query) => {
     // 3. Remove common stop words (imported from utils)
 
     // Split into words, filter out stop words, and sort alphabetically
-    const words = normalized.split(" ").filter(word => word.length > 0 && !stopWords.has(word));
+    let words = normalized.split(" ").filter(word => word.length > 0 && !stopWords.has(word));
+
+    // Remove duplicate words so "kid kid tails" becomes "kid tails"
+    words = Array.from(new Set(words));
 
     // Sort words alphabetically so "kid 9 tails code" matches "code kid 9 tails"
     words.sort();
