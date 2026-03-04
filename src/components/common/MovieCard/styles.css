@@ -1,110 +1,265 @@
 /* ================================================================
-   MOVIE CARD (Poster)
+   MOVIE CARD
    ================================================================ */
 .mc {
     position: relative;
     cursor: pointer;
-    transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), z-index 0s;
-    /* z-index needed for hover pop */
+    transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
 }
 
 .mc--hovered {
     transform: scale(1.05);
-    z-index: 10;
+    z-index: 20;
 }
 
 .mc__poster-wrap {
     position: relative;
-    border-radius: var(--r-md);
+    border-radius: 0.75rem; /* rounded-xl */
     overflow: hidden;
     aspect-ratio: 2 / 3;
-    background: var(--c-surface2);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    background: #1a1a2e; /* dark fallback */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
 }
 
+/* Image zoom & dim logic */
 .mc__poster {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
+    transition: transform 0.5s ease, filter 0.5s ease;
 }
 
-/* Hover overlay with play button */
-.mc__overlay {
+.mc--hovered .mc__poster {
+    transform: scale(1.05);
+}
+
+.mc__poster--dimmed {
+    transform: scale(1.1) !important;
+    filter: brightness(0.3);
+}
+
+/* Gradient overlay */
+.mc__gradient {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.4);
+    background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4), transparent);
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.mc__gradient--strong {
+    opacity: 0.9;
+}
+
+/* ================================================================
+   DETAILS PANEL (Visible on delay)
+   ================================================================ */
+.mc__details-panel {
+    position: absolute;
+    inset: 0;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem;
     opacity: 0;
-    transition: opacity 0.2s;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
 }
 
-.mc--hovered .mc__overlay {
+.mc__details-panel--visible {
     opacity: 1;
+    pointer-events: auto;
 }
 
-.mc__play {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(147, 51, 234, 0.9);
+.mc__details-title {
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+/* Meta Tags */
+.mc__details-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.6rem;
+}
+
+.mc__meta-tag {
+    background: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.9);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 600;
+}
+
+.mc__meta-rating {
+    background: rgba(234, 179, 8, 0.2);
+    color: #facc15;
+}
+
+.mc__meta-hd {
+    background: rgba(147, 51, 234, 0.2); /* Your purple accent */
+    color: #c084fc;
+}
+
+.uppercase { text-transform: uppercase; }
+
+/* Synopsis */
+.mc__details-synopsis {
+    color: #d1d5db;
+    font-size: 0.72rem;
+    line-height: 1.5;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Action Buttons */
+.mc__details-bottom {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.mc__btn {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    transform: scale(0.85);
-    transition: transform 0.2s;
+    gap: 0.3rem;
+    padding: 0.4rem 0;
+    border: none;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
 }
 
-.mc--hovered .mc__play {
-    transform: scale(1);
+.mc__btn:hover {
+    transform: scale(1.05);
 }
 
-/* Rating badge (top right) */
+.mc__btn--secondary {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    backdrop-filter: blur(4px);
+}
+
+.mc__btn--secondary:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.mc__btn--primary {
+    background: #9333ea; /* Your primary purple */
+    color: #fff;
+}
+
+.mc__btn--primary:hover {
+    background: #7e22ce;
+}
+
+/* ================================================================
+   BADGES (Top corners - hidden when overlay shows)
+   ================================================================ */
 .mc__rating {
     position: absolute;
-    top: 6px;
-    right: 6px;
+    top: 8px;
+    right: 8px;
     padding: 3px 6px;
     border-radius: 6px;
     font-size: 0.72rem;
     font-weight: 800;
     color: #fff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    z-index: 5;
 }
 
-/* Match badge (top left) */
 .mc__match {
     position: absolute;
-    top: 6px;
-    left: 6px;
+    top: 8px;
+    left: 8px;
     background: #10b981;
-    /* matcha green */
     color: #fff;
     font-size: 0.65rem;
     font-weight: 800;
     padding: 3px 6px;
     border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    z-index: 5;
 }
 
+/* ================================================================
+   OUTER INFO (Dims when overlay is active)
+   ================================================================ */
 .mc__info {
     margin-top: 0.6rem;
+    transition: opacity 0.3s ease;
+}
+
+.mc__info--dimmed {
+    opacity: 0.3;
 }
 
 .mc__title {
     font-size: 0.92rem;
     font-weight: 600;
-    color: var(--c-text);
+    color: var(--c-text, #fff);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 1.2;
+    margin: 0;
 }
 
 .mc__year {
     font-size: 0.8rem;
-    color: var(--c-muted);
+    color: var(--c-muted, #9ca3af);
 }
+
+/* Pushes the bottom section away from the overview text */
+.mc__details-bottom {
+    margin-top: auto; /* Pushes bottom container to the bottom if parent is flex */
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem; /* Space between language row and buttons */
+    padding-top: 1rem; /* Adds physical breathing room above */
+}
+
+/* Style for the language row */
+.mc__ov-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+}
+
+.mc__ov-label {
+    color: #9ca3af; /* Gray text for 'Language:' */
+}
+
+.mc__ov-val {
+    color: #ffffff;
+    font-weight: 500;
+}
+
+/* Button container */
+.mc__action-btns {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+
