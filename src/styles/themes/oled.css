@@ -1,0 +1,17 @@
+/* OLED Black Theme */
+[data-theme="oled"] {
+    --c-bg: #000000;
+    --c-bg2: #050505;
+    --c-surface: #0a0a0a;
+    --c-surface2: #141414;
+    --c-surface3: #1a1a1a;
+    --c-border: rgba(255, 255, 255, 0.05);
+    --c-border2: rgba(255, 255, 255, 0.1);
+
+    --c-accent: #00f0ff;
+    --c-accent-lt: #4dffff;
+    --c-accent-glow: rgba(0, 240, 255, 0.4);
+
+    --c-text: #ffffff;
+    --c-text2: #888899;
+}
