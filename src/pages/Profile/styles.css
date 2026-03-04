@@ -245,24 +245,24 @@
 }
 
 /* ── Profile Grid ── */
-.profile-grid {
+.profile-lists-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(calc(var(--card-min-width) + 40px), 1fr));
     gap: 1.5rem;
     width: 100%;
     max-width: 1400px;
 }
 
-@media (min-width: 768px) {
-    .profile-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+@media (min-width: 1024px) {
+    .profile-lists-grid {
+        grid-template-columns: repeat(auto-fill, minmax(calc(var(--card-min-width) + 60px), 1fr));
         gap: 1.75rem;
     }
 }
 
-@media (min-width: 1200px) {
-    .profile-grid {
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+@media (min-width: 1400px) {
+    .profile-lists-grid {
+        grid-template-columns: repeat(auto-fill, minmax(calc(var(--card-min-width) + 80px), 1fr));
         gap: 2rem;
     }
 }
