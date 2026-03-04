@@ -1,0 +1,262 @@
+/* ================================================================
+   MOBILE RESPONSIVENESS (Max Width: 850px)
+   ================================================================ */
+
+.topbar__mobile-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 28px;
+    height: 20px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 1001;
+    /* Keep above mobile menu */
+}
+
+.hamburger-line {
+    width: 100%;
+    height: 2px;
+    background-color: var(--c-text);
+    border-radius: var(--r-pill);
+    transition: all 0.3s ease;
+}
+
+/* Hamburger Active State */
+.topbar__mobile-toggle.active .hamburger-line:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.topbar__mobile-toggle.active .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.topbar__mobile-toggle.active .hamburger-line:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
+
+@media (max-width: 850px) {
+    .topbar__inner {
+        padding: 0 1rem;
+        gap: 0.75rem;
+    }
+
+    .topbar__mobile-toggle {
+        display: flex;
+    }
+
+    .topbar__desktop-actions {
+        display: none;
+    }
+
+    .topbar__mobile-actions {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 1.25rem;
+        margin-top: 1rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--c-border);
+        width: 100%;
+    }
+
+    /* Mobile Menu Drawer */
+    .topbar__nav {
+        position: fixed;
+        top: 58px;
+        /* Below topbar */
+        left: 0;
+        width: 100%;
+        height: max-content;
+        max-height: calc(100vh - 58px);
+        overflow-y: auto;
+        background: var(--c-bg2);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        border-bottom: 1px solid var(--c-border);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.5rem;
+        gap: 0.5rem;
+        z-index: 1000;
+
+        /* Hidden by default, animated in */
+        clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        pointer-events: none;
+    }
+
+    .topbar__nav.mobile-open {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    .topbar__nav-links {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 0.5rem;
+    }
+
+    .topbar__nav-link {
+        width: 100%;
+        text-align: left;
+        padding: 12px 16px;
+        font-size: 1rem;
+        border-radius: 8px;
+    }
+
+    /* Shrink the search bar to prioritize logo / avatar */
+    .topbar__search {
+        padding: 6px 10px;
+        margin-left: auto;
+        margin-right: 0.5rem;
+        transition: all 0.2s;
+    }
+
+    .topbar__search input {
+        width: 100px;
+    }
+
+    .topbar__search:focus-within {
+        position: absolute;
+        top: 50%;
+        left: 1rem;
+        right: 4rem;
+        /* Leave room for hamburger toggle */
+        transform: translateY(-50%);
+        background: var(--c-bg);
+        /* use a solid bg so it covers the logo nicely */
+        z-index: 1100;
+        border: 1px solid var(--c-accent-lt);
+        border-radius: var(--r-pill);
+        padding: 8px 14px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .topbar__search:focus-within input {
+        width: 100%;
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 480px) {
+
+    /* Even smaller screens, logo text can be hidden to save space */
+    .topbar__logo-text {
+        display: none;
+    }
+
+    .topbar__search input {
+        width: 0;
+        /* Hide text box, show only icon until focused */
+        padding: 0;
+        opacity: 0;
+        transition: all 0.2s;
+    }
+
+    .topbar__search {
+        border-color: transparent;
+        background: transparent;
+    }
+
+    /* When the parent container is clicked/focused, expand the input */
+    .topbar__search:focus-within {
+        background: var(--c-bg);
+        border-color: var(--c-accent-lt);
+        padding: 8px 14px;
+    }
+
+    .topbar__search:focus-within input {
+        width: 100%;
+        opacity: 1;
+        padding-left: 8px;
+    }
+}
+
+@media (max-width: 850px) {
+
+    /* Flatten the user dropdown in the mobile menu */
+    .topbar__mobile-actions .topbar__user-container {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: center;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .topbar__mobile-actions .topbar__user-avatar {
+        width: 48px;
+        height: 48px;
+    }
+
+    .topbar__mobile-actions .topbar__user-dropdown {
+        display: contents;
+        /* MAGIC! Children become part of the grid */
+    }
+
+    .topbar__mobile-actions .topbar__user-dropdown::before {
+        display: none;
+    }
+
+    .topbar__mobile-actions .dropdown-header {
+        padding: 0;
+        border-bottom: none;
+    }
+
+    .topbar__mobile-actions .dropdown-menu {
+        grid-column: 1 / -1;
+        padding: 1.25rem 0 0 0;
+        border-top: 1px solid var(--c-surface3);
+        margin-top: 0.5rem;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .topbar__mobile-actions .dropdown-actions {
+        grid-column: 1 / -1;
+        padding: 0;
+        border-top: none;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    .topbar__mobile-actions .dropdown-item {
+        padding: 14px 18px;
+        justify-content: flex-start;
+        font-size: 1rem;
+        font-weight: 500;
+        background: var(--c-surface);
+        border: 1px solid var(--c-surface3);
+        border-radius: 12px;
+        width: 100%;
+        transition: background 0.2s;
+    }
+
+    .topbar__mobile-actions .dropdown-item:active {
+        background: var(--c-surface2);
+    }
+
+    .topbar__mobile-actions .dropdown-logout {
+        padding: 14px 18px;
+        justify-content: flex-start;
+        font-size: 1rem;
+        font-weight: 600;
+        background: rgba(255, 75, 75, 0.05);
+        border: 1px solid rgba(255, 75, 75, 0.15);
+        border-radius: 12px;
+        color: #ff4b4b;
+        width: 100%;
+    }
+
+    .topbar__mobile-actions .dropdown-logout svg {
+        color: #ff4b4b;
+    }
+}
