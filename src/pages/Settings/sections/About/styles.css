@@ -1,0 +1,284 @@
+/* About Section Styles */
+.about-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Hero Card */
+.about-hero-card {
+    background-color: var(--c-surface);
+    border: 1px solid var(--c-surface3);
+    border-radius: 12px;
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.about-logo-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--c-surface2);
+    border: 1px solid var(--c-surface3);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--c-accent);
+    margin-bottom: 1rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.vibeo-logo-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.about-hero-card h3 {
+    font-size: 1.8rem;
+    margin: 0 0 0.25rem 0;
+    color: var(--c-text);
+    font-weight: 700;
+}
+
+.about-version {
+    font-size: 0.85rem;
+    color: var(--c-text2);
+    margin-bottom: 1.5rem;
+}
+
+/* Tech Pills */
+.tech-stack-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    max-width: 600px;
+}
+
+.tech-pill {
+    background: var(--c-bg2);
+    border: 1px solid var(--c-surface3);
+    color: var(--c-text2);
+    padding: 0.35rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+/* Hero Actions */
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.hero-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-sponsor {
+    background: var(--c-accent-glow);
+    color: var(--c-accent);
+    border: 1px solid var(--c-accent);
+}
+
+.btn-sponsor:hover {
+    background: var(--c-accent);
+    color: var(--c-bg);
+}
+
+.btn-github {
+    background: transparent;
+    color: var(--c-text);
+    border: 1px solid var(--c-surface3);
+}
+
+.btn-github:hover {
+    background: var(--c-surface2);
+}
+
+.btn-icon {
+    opacity: 0.8;
+}
+
+/* Middle Action Cards */
+.about-action-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.action-card {
+    background-color: var(--c-surface);
+    border: 1px solid var(--c-surface3);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none !important;
+    color: inherit;
+    transition: all 0.2s ease;
+}
+
+.action-card:hover {
+    background-color: var(--c-surface2);
+    border-color: var(--c-text2);
+    text-decoration: none !important;
+}
+
+.action-card .card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.action-card h4 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    color: var(--c-text);
+}
+
+.action-card p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--c-text2);
+}
+
+.link-arrow {
+    color: var(--c-text2);
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+.action-card:hover .link-arrow {
+    opacity: 1;
+}
+
+/* Footer Card */
+.about-footer-card {
+    background-color: var(--c-surface);
+    border: 1px solid var(--c-surface3);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.footer-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-section h4 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--c-text2);
+    letter-spacing: 1px;
+    margin: 0 0 1rem 0;
+}
+
+.social-links {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.social-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--c-bg2);
+    border: 1px solid var(--c-surface3);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--c-text2);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.social-icon:hover {
+    background: var(--c-surface2);
+    color: var(--c-text);
+}
+
+.credits-label {
+    font-size: 0.8rem;
+    color: var(--c-text2);
+    margin: 0 0 0.5rem 0;
+}
+
+.credits-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.credits-list li {
+    font-size: 0.9rem;
+    color: var(--c-text);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.dev-handle {
+    font-size: 0.75rem;
+    color: var(--c-text2);
+    background: var(--c-surface2);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+}
+
+/* Responsive Overrides */
+@media (max-width: 600px) {
+    .about-footer-card {
+        grid-template-columns: 1fr;
+    }
+
+    .about-hero-card {
+        padding: 1.5rem 1rem;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .hero-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .action-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .action-card .link-arrow {
+        align-self: flex-end;
+    }
+}
