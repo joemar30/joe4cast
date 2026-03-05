@@ -220,42 +220,19 @@ const Header = () => {
                         <nav className={`topbar__nav ${isMobileMenuOpen ? 'mobile-open' : ''}`} aria-label="Site Navigation">
                             <div className="topbar__nav-links">
                                 {[
-                                    { label: 'Home', hash: '', path: '/' },
-                                    { label: 'Trending', hash: 'trending', path: '/' },
-                                    { label: 'Top Rated', hash: 'top-rated', path: '/' },
-                                    { label: 'New & Popular', hash: 'new-release', path: '/' },
-                                    { label: 'Taste Matcher', hash: '', path: '/ai-match' },
+                                    { label: 'Discover', path: '/browse/trending' },
+                                    { label: 'Smart Search', path: '/smart-search' },
+                                    { label: 'Taste Matcher', path: '/ai-match' },
                                 ].map(link => {
-                                    const isHomeActive = location.pathname === '/' && !location.hash && !link.hash && link.path === '/';
-                                    const isHashActive = location.pathname === '/' && location.hash === `#${link.hash}` && link.path === '/';
-                                    const isPathActive = location.pathname === link.path && link.path !== '/';
-                                    const isActive = isHomeActive || isHashActive || isPathActive;
+                                    const isActive = location.pathname === link.path || (link.path.startsWith('/browse') && location.pathname.startsWith('/browse'));
 
                                     return (
                                         <button
                                             key={link.label}
-                                            className={`topbar__nav-link ${isActive ? 'active' : ''} ${link.isSpecial ? 'special-link' : ''}`}
+                                            className={`topbar__nav-link ${isActive ? 'active' : ''}`}
                                             onClick={() => {
-                                                if (link.path !== '/') {
-                                                    navigate(link.path);
-                                                } else {
-                                                    if (location.pathname !== '/') {
-                                                        navigate(link.hash ? `/#${link.hash}` : '/');
-                                                    } else {
-                                                        if (!link.hash) {
-                                                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                                                            navigate('/');
-                                                        } else {
-                                                            const element = document.getElementById(link.hash);
-                                                            if (element) {
-                                                                const y = element.getBoundingClientRect().top + window.scrollY - 80;
-                                                                window.scrollTo({ top: y, behavior: 'smooth' });
-                                                            }
-                                                            navigate(`/#${link.hash}`);
-                                                        }
-                                                    }
-                                                }
-                                                setIsMobileMenuOpen(false); // Close menu on click
+                                                navigate(link.path);
+                                                setIsMobileMenuOpen(false);
                                             }}
                                         >
                                             {link.label}
@@ -277,18 +254,20 @@ const Header = () => {
                                         className={`topbar__search ${dropdownOpen ? 'dropdown-active' : ''}`}
                                         onSubmit={handleSearch}
                                     >
-                                        {/* Search icon / spinner */}
-                                        {searching ? (
-                                            <svg className="search-spinner" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" strokeLinecap="round" />
-                                            </svg>
-                                        ) : (
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                                                <circle cx="11" cy="11" r="8" />
-                                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                                            </svg>
-                                        )}
+                                        {/* Search icon / spinner wrapped in label for focus toggle */}
+                                        <label htmlFor="mobile-search-input" className="topbar__search-icon-label">
+                                            {searching ? (
+                                                <svg className="search-spinner" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" strokeLinecap="round" />
+                                                </svg>
+                                            ) : (
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                                    <circle cx="11" cy="11" r="8" />
+                                                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                                </svg>
+                                            )}
+                                        </label>
                                         <input
                                             id="mobile-search-input"
                                             type="text"

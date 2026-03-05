@@ -28,6 +28,7 @@ import TermsOfService from '@/pages/Legal/TermsOfService';
 import PrivacyPolicy from '@/pages/Legal/PrivacyPolicy';
 import CookiePreferences from '@/pages/Legal/CookiePreferences';
 import AIRecommender from '@/pages/AIRecommender';
+import SmartSearch from '@/pages/SmartSearch';
 
 const App = () => {
   const { currentUser, isOnboarded } = useAuth();
@@ -65,6 +66,7 @@ const App = () => {
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/cookies" element={<CookiePreferences />} />
       <Route path="/ai-match" element={<AIRecommender />} />
+      <Route path="/smart-search" element={<SmartSearch />} />
       <Route path="/watch/:id" element={<Watch />} />
 
       {/* Play page – dedicated player */}

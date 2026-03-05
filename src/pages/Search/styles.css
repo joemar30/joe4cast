@@ -33,24 +33,6 @@
     margin-bottom: 1rem;
 }
 
-.section-subtitle {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    color: var(--c-text);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.search-divider {
-    border: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--c-border), transparent);
-    margin: 1rem 0;
-    opacity: 0.3;
-}
-
 /* Grid & Cards */
 .search-results-grid {
     display: grid;
@@ -66,56 +48,7 @@
     position: relative;
 }
 
-/* Gemini Specific Styles */
-.gemini-title {
-    background: linear-gradient(90deg, #A259FF, #FF62A5, #FFB84D);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 20px rgba(162, 89, 255, 0.4);
-}
 
-/* Gemini card hover glow removed per user request */
-
-.gemini-indicator {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    background: linear-gradient(135deg, #A259FF, #FF62A5);
-    color: white;
-    font-size: 0.70rem;
-    font-weight: 700;
-    padding: 0.25rem 0.6rem;
-    border-radius: 20px;
-    box-shadow: 0 4px 10px rgba(162, 89, 255, 0.5);
-    z-index: 10;
-    pointer-events: none;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.gemini-loading {
-    padding: 3rem 0;
-}
-
-.gemini-spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid rgba(162, 89, 255, 0.2);
-    border-top-color: #A259FF;
-    border-radius: 50%;
-    animation: spinRing 0.8s linear infinite;
-    filter: drop-shadow(0 0 8px rgba(162, 89, 255, 0.6));
-}
-
-.gemini-fallback {
-    color: var(--c-muted);
-    font-style: italic;
-    background: rgba(255, 255, 255, 0.03);
-    padding: 1rem;
-    border-radius: 8px;
-    display: inline-block;
-    border: 1px dashed rgba(255, 255, 255, 0.1);
-}
 
 @keyframes slideUpFade {
     to {

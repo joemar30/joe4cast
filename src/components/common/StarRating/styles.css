@@ -1,0 +1,40 @@
+.star-rating-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stars {
+    display: flex;
+    gap: 2px;
+}
+
+.star-wrapper {
+    position: relative;
+    width: 14px;
+    height: 14px;
+}
+
+.star-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.star-empty {
+    fill: var(--c-surface2, rgba(255, 255, 255, 0.1));
+}
+
+.star-filled {
+    fill: #f59e0b;
+    /* Amber/Gold */
+}
+
+.rating-text {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--c-text, #e2e8f0);
+    margin-left: 2px;
+}

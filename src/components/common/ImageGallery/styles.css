@@ -1,0 +1,65 @@
+.gallery-section {
+    margin-top: 3rem;
+    padding: 0 4%;
+}
+
+.gallery-container {
+    position: relative;
+    width: 100%;
+}
+
+.gallery-track {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 1.5rem;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: var(--c-border, rgba(255, 255, 255, 0.1)) transparent;
+}
+
+.gallery-track::-webkit-scrollbar {
+    height: 6px;
+}
+
+.gallery-track::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.gallery-track::-webkit-scrollbar-thumb {
+    background-color: var(--c-border, rgba(255, 255, 255, 0.1));
+    border-radius: 6px;
+}
+
+.gallery-card {
+    flex: 0 0 auto;
+    width: 320px;
+    aspect-ratio: 16 / 9;
+    border-radius: 12px;
+    overflow: hidden;
+    scroll-snap-align: start;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+}
+
+.gallery-card:hover {
+    transform: scale(1.02);
+}
+
+.gallery-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@media (max-width: 768px) {
+    .gallery-section {
+        padding: 0 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .gallery-card {
+        width: 220px;
+    }
+}

@@ -1,0 +1,249 @@
+.vibe-stats {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+}
+
+.vibe-stats--header {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    margin-bottom: 0;
+    padding: 1.5rem 2rem;
+}
+
+.vibe-stats--header .vibe-stats__header {
+    margin-bottom: 1.5rem;
+}
+
+.vibe-stats__title-group h3 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin: 0;
+    color: #fff;
+    letter-spacing: -0.01em;
+}
+
+.vibe-stats__subtitle {
+    font-size: 0.85rem;
+    color: var(--c-muted);
+    margin: 4px 0 0;
+}
+
+.vibe-stats__total {
+    text-align: right;
+}
+
+.total-label {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--c-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 2px;
+}
+
+.total-value {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--c-text);
+}
+
+.vibe-stats__content {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 2rem;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+/* Radar Chart */
+.radar-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    aspect-ratio: 1;
+}
+
+.radar-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.1));
+}
+
+.radar-grid-circle {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.05);
+    stroke-width: 1;
+}
+
+.radar-axis-line {
+    stroke: rgba(255, 255, 255, 0.08);
+    stroke-width: 1;
+}
+
+.radar-polygon {
+    fill: rgba(168, 85, 247, 0.25);
+    stroke: var(--c-accent-lt);
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: radar-pulse 4s ease-in-out infinite;
+}
+
+.radar-point {
+    fill: #fff;
+    filter: drop-shadow(0 0 4px var(--c-accent-lt));
+}
+
+@keyframes radar-pulse {
+
+    0%,
+    100% {
+        fill: rgba(168, 85, 247, 0.2);
+    }
+
+    50% {
+        fill: rgba(168, 85, 247, 0.35);
+    }
+}
+
+.radar-label {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    pointer-events: none;
+}
+
+.label-icon {
+    font-size: 1.1rem;
+    margin-bottom: 2px;
+}
+
+.label-text {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--c-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+}
+
+/* Insights Column */
+.vibe-insights {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.insight-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 1.25rem;
+    border-radius: 16px;
+}
+
+.insight-card h4 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin: 0 0 1rem;
+    color: var(--c-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.insight-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.insight-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.insight-item .val {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.insight-item .lab {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--c-muted);
+}
+
+.top-dimension {
+    background: linear-gradient(135deg, var(--c-accent), var(--c-accent-lt));
+    padding: 1.25rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(168, 85, 247, 0.25);
+}
+
+.top-dim-label {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 4px;
+}
+
+.top-dim-value {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .vibe-stats__content {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+
+    .vibe-insights {
+        flex-direction: row;
+        width: 100%;
+    }
+
+    .insight-card,
+    .top-dimension {
+        flex: 1;
+    }
+}
+
+@media (max-width: 580px) {
+    .vibe-stats {
+        padding: 1.5rem;
+    }
+
+    .vibe-stats__header {
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .radar-container {
+        max-width: 320px;
+    }
+
+    .vibe-insights {
+        flex-direction: column;
+    }
+}

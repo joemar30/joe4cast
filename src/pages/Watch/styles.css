@@ -8,8 +8,11 @@
     min-height: 85vh;
     display: flex;
     align-items: center;
-    overflow: hidden;
+    overflow: visible;
+    /* Prevent clipping of dropdowns */
     background: var(--c-bg);
+    z-index: 10;
+    /* Ensure it stays above sections below it when menu is open */
 }
 
 .detail-hero__backdrop {
@@ -24,6 +27,32 @@
     object-fit: cover;
     object-position: center 20%;
     filter: brightness(0.45) saturate(1.1);
+}
+
+/* Auto-playing Background Video */
+.detail-hero__video-bg {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+}
+
+.detail-hero__video-bg iframe {
+    width: 100vw;
+    height: 56.25vw;
+    /* 16:9 Aspect Ratio */
+    min-height: 100vh;
+    min-width: 177.77vh;
+    /* 16:9 Aspect Ratio */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.15);
+    /* Scale up slightly to hide youtube branding/edges */
+    pointer-events: none;
+    /* Make it unclickable */
+    opacity: 0.6;
+    /* Dim it so text is readable */
 }
 
 .detail-hero__overlay {
@@ -173,12 +202,32 @@
     border-color: rgba(255, 255, 255, 0.5);
 }
 
-/* Overview */
 .detail-hero__overview {
     font-size: 0.92rem;
     line-height: 1.7;
     color: rgba(255, 255, 255, 0.75);
     max-width: 520px;
+}
+
+/* Production Metadata */
+.detail-hero__production {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.production-finances {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.production-finances strong,
+.production-studios strong {
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 600;
 }
 
 .detail-actions {
@@ -248,21 +297,48 @@
 }
 
 /* ── Responsive ── */
+/* ── Responsive ── */
+@media (max-width: 992px) {
+    .detail-hero__content {
+        gap: 2rem;
+        padding-top: 5rem;
+    }
+
+    .detail-hero__poster {
+        width: 240px;
+    }
+
+    .detail-hero__title .movie-logo-text {
+        font-size: 3rem;
+    }
+}
+
 @media (max-width: 768px) {
     .detail-hero {
         min-height: auto;
+        padding-bottom: 2rem;
+    }
+
+    .detail-hero__backdrop img {
+        object-position: center 10%;
+    }
+
+    .detail-hero__video-bg iframe {
+        opacity: 0.4;
+        /* Slightly dimmer on mobile for better text contrast */
     }
 
     .detail-hero__content {
         flex-direction: column;
         text-align: center;
         align-items: center;
-        padding: 5rem 1.5rem 2.5rem;
-        gap: 1.5rem;
+        padding: 4rem 1.5rem 2rem;
+        gap: 2rem;
     }
 
     .detail-hero__poster {
-        width: 200px;
+        width: 180px;
+        margin-top: 2rem;
     }
 
     .detail-hero__info {
@@ -270,7 +346,7 @@
     }
 
     .detail-hero__title {
-        font-size: 2rem;
+        font-size: 2.2rem;
     }
 
     .detail-hero__meta {
@@ -283,5 +359,51 @@
 
     .detail-hero__overview {
         text-align: center;
+        font-size: 0.88rem;
+        line-height: 1.6;
+    }
+
+    .detail-hero__production {
+        align-items: center;
+    }
+
+    .production-finances {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .detail-actions {
+        flex-direction: column;
+        width: 100%;
+        max-width: 320px;
+        gap: 0.75rem;
+    }
+
+    .detail-play-btn,
+    .detail-watchlist-btn,
+    .watchlist-dropdown-container {
+        width: 100% !important;
+    }
+
+    .watchlist-dropdown-container .watchlist-btn {
+        width: 100% !important;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .detail-hero__poster {
+        width: 150px;
+    }
+
+    .detail-hero__title .movie-logo-text {
+        font-size: 2rem;
+    }
+
+    .detail-play-btn,
+    .detail-watchlist-btn {
+        padding: 12px 24px;
+        font-size: 0.95rem;
     }
 }

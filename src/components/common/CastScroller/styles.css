@@ -1,0 +1,123 @@
+.cast-scroller-section {
+    margin-top: 3rem;
+    padding: 0 4%;
+}
+
+.scroller-container {
+    position: relative;
+    width: 100%;
+}
+
+.scroller-track {
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 1.5rem;
+    /* Space for scrollbar */
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 0;
+
+    /* Hide scrollbar for cleaner look, but keep functionality */
+    scrollbar-width: thin;
+    scrollbar-color: var(--c-border, rgba(255, 255, 255, 0.1)) transparent;
+}
+
+.scroller-track::-webkit-scrollbar {
+    height: 6px;
+}
+
+.scroller-track::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scroller-track::-webkit-scrollbar-thumb {
+    background-color: var(--c-border, rgba(255, 255, 255, 0.1));
+    border-radius: 6px;
+}
+
+.actor-card {
+    flex: 0 0 auto;
+    width: 140px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    scroll-snap-align: start;
+}
+
+.actor-photo {
+    width: 140px;
+    height: 210px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--c-surface2, rgba(255, 255, 255, 0.05));
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+}
+
+.actor-card:hover .actor-photo {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.actor-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.actor-photo-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--c-muted, #64748b);
+}
+
+.actor-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.actor-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--c-text, #e2e8f0);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.actor-character {
+    font-size: 0.8rem;
+    color: var(--c-muted, #94a3b8);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+    .cast-scroller-section {
+        padding: 0 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .actor-card {
+        width: 100px;
+    }
+
+    .actor-photo {
+        width: 100px;
+        height: 150px;
+    }
+
+    .actor-name {
+        font-size: 0.85rem;
+    }
+
+    .actor-character {
+        font-size: 0.75rem;
+    }
+}

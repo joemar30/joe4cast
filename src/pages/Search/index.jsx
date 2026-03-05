@@ -4,7 +4,6 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import MovieCard from '@/components/common/MovieCard';
 import { fetchTMDB } from '@/api/tmdbClient';
-import { fetchGeminiRecommendations, normalizeSearchQuery } from '@/api/geminiClient';
 import './styles.css';
 
 const Search = () => {
@@ -15,102 +14,49 @@ const Search = () => {
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // Gemini State
-    const [geminiResults, setGeminiResults] = useState([]);
-    const [geminiLoading, setGeminiLoading] = useState(false);
-    const [geminiError, setGeminiError] = useState(false);
-
     useEffect(() => {
         let isMounted = true;
 
         const performSearch = async () => {
             if (!query.trim()) {
                 setResults([]);
-                setGeminiResults([]);
                 setLoading(false);
-                setGeminiLoading(false);
                 return;
             }
 
-            // --- CACHE CHECK (TMDB + GEMINI FULL DATA) ---
-            const normalizedQueryForCache = normalizeSearchQuery(query);
-            const cacheKeyTMDB = `tmdb_search_${normalizedQueryForCache}`;
-            const cacheKeyGeminiData = `gemini_data_${normalizedQueryForCache}`;
+            // --- SESSION CACHE CHECK ---
+            const cacheKey = `tmdb_search_${query.trim().toLowerCase()}`;
+            const cached = sessionStorage.getItem(cacheKey);
 
-            const cachedTMDB = sessionStorage.getItem(cacheKeyTMDB);
-            const cachedGeminiData = sessionStorage.getItem(cacheKeyGeminiData);
-
-            if (cachedTMDB && cachedGeminiData) {
-                console.log(`[Search Cache Hit] Loaded full results for: "${query}"`);
-                setResults(JSON.parse(cachedTMDB));
-                setGeminiResults(JSON.parse(cachedGeminiData));
+            if (cached) {
+                console.log(`[Search Cache Hit] Loaded results for: "${query}"`);
+                setResults(JSON.parse(cached));
                 setLoading(false);
-                setGeminiLoading(false);
                 return;
             }
-            // ---------------------------------------------
 
             setLoading(true);
-            setGeminiLoading(true);
-            setGeminiError(false);
 
-            // 1. Fire off Standard TMDB Search
-            const tmdbPromise = fetchTMDB('/search/multi', {
-                query: encodeURIComponent(query),
-                include_adult: false,
-                page: 1
-            }).then(data => {
+            try {
+                const data = await fetchTMDB('/search/multi', {
+                    query: encodeURIComponent(query),
+                    include_adult: false,
+                    page: 1
+                });
+
                 if (isMounted && data && data.results) {
                     const mediaResults = data.results.filter(
                         item => item.media_type === 'movie' || item.media_type === 'tv'
                     );
                     setResults(mediaResults);
-                    sessionStorage.setItem(cacheKeyTMDB, JSON.stringify(mediaResults));
+                    sessionStorage.setItem(cacheKey, JSON.stringify(mediaResults));
                 }
-            }).catch(err => {
+            } catch (err) {
                 console.error("TMDB Search failed:", err);
                 if (isMounted) setResults([]);
-            }).finally(() => {
+            } finally {
                 if (isMounted) setLoading(false);
-            });
-
-
-            // 2. Fire Async Gemini Search in parallel
-            const geminiPromise = fetchGeminiRecommendations(query).then(async titles => {
-                if (titles && titles.length > 0) {
-                    // For each title Gemini recommended, fetch the TMDB data
-                    const moviePromises = titles.map(title =>
-                        fetchTMDB('/search/multi', {
-                            query: encodeURIComponent(title),
-                            include_adult: false,
-                            page: 1
-                        })
-                    );
-
-                    const resultsArrays = await Promise.all(moviePromises);
-
-                    // We only want the top result for each recommended title
-                    const topMovies = resultsArrays
-                        .map(data => data?.results && data.results.length > 0 ? data.results[0] : null)
-                        .filter(movie => movie !== null && (movie.media_type === 'movie' || movie.media_type === 'tv'));
-
-                    if (isMounted) {
-                        setGeminiResults(topMovies);
-                        sessionStorage.setItem(cacheKeyGeminiData, JSON.stringify(topMovies));
-                    }
-                } else {
-                    if (isMounted) setGeminiError(true);
-                }
-            }).catch(err => {
-                console.error("Gemini flow failed:", err);
-                if (isMounted) {
-                    setGeminiError(true);
-                    setGeminiResults([]);
-                }
-            }).finally(() => {
-                if (isMounted) setGeminiLoading(false);
-            });
-
+            }
         };
 
         performSearch();
@@ -120,21 +66,15 @@ const Search = () => {
         };
     }, [query]);
 
-    // Helper to render grid
-    const renderGrid = (items, isGemini = false) => (
+    const renderGrid = (items) => (
         <div className="search-results-grid">
             {items.map((item, index) => (
-                <div className={`search-card-wrap ${isGemini ? 'gemini-card-wrap' : ''}`} key={`search-${isGemini ? 'gemini' : 'tmdb'}-${item.id}-${index}`}>
+                <div className="search-card-wrap" key={`search-${item.id}-${index}`}>
                     <MovieCard
                         movie={item}
                         onClick={(m) => navigate(`/watch/${m.id}?type=${m.media_type || 'movie'}`)}
                         animationDelay={`${(index % 20) * 30}ms`}
                     />
-                    {isGemini && (
-                        <div className="gemini-indicator">
-                            <span title="Recommended by Gemini AI">✨ AI Pick</span>
-                        </div>
-                    )}
                 </div>
             ))}
         </div>
@@ -154,46 +94,25 @@ const Search = () => {
                 {!query && (
                     <div className="search-empty">
                         <h2>Enter a query to start searching</h2>
-                        <p>Tip: You can use natural language, like "Funny 90s movies" or "Movies about space exploration"</p>
+                        <p>Search for any movie or TV show by title.</p>
                     </div>
                 )}
 
                 {query && (
-                    <>
-                        {/* Gemini Section */}
-                        <div className="search-section">
-                            <h2 className="section-subtitle gemini-title">✨ Gemini AI Suggestions</h2>
-                            {geminiLoading ? (
-                                <div className="loading-center gemini-loading">
-                                    <div className="gemini-spinner" />
-                                    <p>Gemini AI is analyzing your query...</p>
-                                </div>
-                            ) : geminiError || geminiResults.length === 0 ? (
-                                <p className="gemini-fallback">No AI suggestions available for this query.</p>
-                            ) : (
-                                renderGrid(geminiResults, true)
-                            )}
-                        </div>
-
-                        <hr className="search-divider" />
-
-                        {/* Standard Search Section */}
-                        <div className="search-section">
-                            <h2 className="section-subtitle">Standard Search Results</h2>
-                            {loading ? (
-                                <div className="loading-center">
-                                    <div className="spinner" />
-                                    <p>Searching database...</p>
-                                </div>
-                            ) : results.length > 0 ? (
-                                renderGrid(results, false)
-                            ) : (
-                                <div className="search-empty">
-                                    <h2>No standard results found for "{query}"</h2>
-                                </div>
-                            )}
-                        </div>
-                    </>
+                    <div className="search-section">
+                        {loading ? (
+                            <div className="loading-center">
+                                <div className="spinner" />
+                                <p>Searching database...</p>
+                            </div>
+                        ) : results.length > 0 ? (
+                            renderGrid(results)
+                        ) : (
+                            <div className="search-empty">
+                                <h2>No results found for "{query}"</h2>
+                            </div>
+                        )}
+                    </div>
                 )}
 
             </main>
