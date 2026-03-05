@@ -6,12 +6,18 @@
  * ═══════════════════════════════════════════════════════════════
  */
 
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 
 import Header from '@/components/layout/Header';
 import MovieRow from '@/components/layout/MovieRow';
 import MovieLogo from '@/components/common/MovieLogo';
+import StarRating from '@/components/common/StarRating';
+import TrailerModal from '@/components/common/TrailerModal';
+import WatchlistDropdown from '@/components/common/WatchlistDropdown';
+import CastScroller from '@/components/common/CastScroller';
+import ImageGallery from '@/components/common/ImageGallery';
+import ReviewSection from '@/components/common/ReviewSection';
 import CollectionGrid from '@/components/layout/CollectionGrid';
 import Footer from '@/components/layout/Footer';
 import { useMovieDetail } from '@/hooks/useMovieDetail';
@@ -28,6 +34,7 @@ const Watch = () => {
 
     /* ── State ── */
     const { movie: movieMeta, similar, loading } = useMovieDetail(id, type);
+    const [isTrailerOpen, setIsTrailerOpen] = useState(false);
     const { isWatchlisted, toggleWatchlist } = useUserMovies();
 
     const inWatchlist = movieMeta ? isWatchlisted(movieMeta.id) : false;
@@ -49,12 +56,23 @@ const Watch = () => {
                     DETAIL HERO — Backdrop + poster + info
                 ═══════════════════════════════════════════════ */}
                 <section className="detail-hero" aria-label="Movie Details">
-                    {/* Backdrop */}
-                    {backdropUrl && (
+                    {/* Background: Auto-play Trailer or Backdrop */}
+                    {movieMeta?.trailerKey ? (
+                        <div className="detail-hero__backdrop detail-hero__video-bg">
+                            <iframe
+                                src={`https://www.youtube.com/embed/${movieMeta.trailerKey}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&loop=1&playlist=${movieMeta.trailerKey}&modestbranding=1`}
+                                title="Trailer Background"
+                                frameBorder="0"
+                                allow="autoplay; encrypted-media"
+                                tabIndex="-1"
+                                aria-hidden="true"
+                            ></iframe>
+                        </div>
+                    ) : backdropUrl ? (
                         <div className="detail-hero__backdrop">
                             <img src={backdropUrl} alt="" aria-hidden="true" />
                         </div>
-                    )}
+                    ) : null}
                     <div className="detail-hero__overlay" />
 
                     <div className="detail-hero__content">
@@ -83,24 +101,51 @@ const Watch = () => {
                                 {/* Meta row: year · rating · cert · HD */}
                                 <div className="detail-hero__meta">
                                     {releaseDate && <span>{releaseDate}</span>}
-                                    {rating && <span>{rating}</span>}
+                                    {movieMeta.vote_average > 0 && (
+                                        <div style={{ transform: 'translateY(-1px)' }}>
+                                            <StarRating rating={movieMeta.vote_average} />
+                                        </div>
+                                    )}
                                     <span className="detail-cert-badge">{certification}</span>
                                     <span className="detail-hd-badge">HD</span>
                                 </div>
 
-                                {/* Genre pills */}
-                                {movieMeta.genres?.length > 0 && (
-                                    <div className="detail-hero__genres">
-                                        {movieMeta.genres.map(g => (
-                                            <span key={g.id} className="detail-genre-pill">{g.name}</span>
-                                        ))}
-                                    </div>
-                                )}
+                                {/* Director & Genre pills */}
+                                <div className="detail-hero__genres">
+                                    {movieMeta.director && (
+                                        <span className="detail-genre-pill" style={{ background: 'rgba(168, 85, 247, 0.2)', borderColor: 'rgba(168, 85, 247, 0.4)', color: '#c084fc', display: 'flex', gap: '4px', alignItems: 'center' }}>
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14v-4z"></path><rect x="3" y="6" width="12" height="12" rx="2" ry="2"></rect></svg>
+                                            {movieMeta.director}
+                                        </span>
+                                    )}
+                                    {movieMeta.genres?.map(g => (
+                                        <span key={g.id} className="detail-genre-pill">{g.name}</span>
+                                    ))}
+                                </div>
 
                                 {/* Overview */}
                                 {movieMeta.overview && (
                                     <p className="detail-hero__overview">{movieMeta.overview}</p>
                                 )}
+
+                                {/* Production & Box Office Details */}
+                                <div className="detail-hero__production">
+                                    {(movieMeta.budget > 0 || movieMeta.revenue > 0) && (
+                                        <div className="production-finances">
+                                            {movieMeta.budget > 0 && (
+                                                <span><strong>Budget:</strong> ${movieMeta.budget.toLocaleString()}</span>
+                                            )}
+                                            {movieMeta.revenue > 0 && (
+                                                <span><strong>Revenue:</strong> ${movieMeta.revenue.toLocaleString()}</span>
+                                            )}
+                                        </div>
+                                    )}
+                                    {movieMeta.production_companies?.length > 0 && (
+                                        <div className="production-studios">
+                                            <strong>Studios:</strong> {movieMeta.production_companies.map(c => c.name).join(', ')}
+                                        </div>
+                                    )}
+                                </div>
 
                                 {/* Actions */}
                                 <div className="detail-actions">
@@ -110,19 +155,18 @@ const Watch = () => {
                                         </svg>
                                         Play
                                     </button>
-                                    <button
-                                        className={`detail-watchlist-btn ${inWatchlist ? 'active' : ''}`}
-                                        onClick={() => toggleWatchlist(movieMeta)}
-                                    >
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill={inWatchlist ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                            {inWatchlist ? (
-                                                <path d="M20 6L9 17l-5-5" />
-                                            ) : (
-                                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                                            )}
-                                        </svg>
-                                        {inWatchlist ? 'In Watchlist' : 'Add to Watchlist'}
-                                    </button>
+
+                                    {movieMeta?.trailerKey && (
+                                        <button
+                                            className="detail-watchlist-btn"
+                                            onClick={() => setIsTrailerOpen(true)}
+                                            style={{ color: '#e2e8f0' }}
+                                        >
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                                            Trailer
+                                        </button>
+                                    )}
+                                    <WatchlistDropdown movie={movieMeta} />
                                 </div>
                             </div>
                         )}
@@ -136,6 +180,21 @@ const Watch = () => {
                         )}
                     </div>
                 </section>
+
+                {/* ═══════════════════════════════════════════════
+                    CAST & CREW SCROLLER
+                ═══════════════════════════════════════════════ */}
+                <CastScroller cast={movieMeta?.cast} />
+
+                {/* ═══════════════════════════════════════════════
+                    IMAGE GALLERY
+                ═══════════════════════════════════════════════ */}
+                <ImageGallery images={movieMeta?.backdrops} />
+
+                {/* ═══════════════════════════════════════════════
+                    FEATURED REVIEWS
+                ═══════════════════════════════════════════════ */}
+                <ReviewSection reviews={movieMeta?.reviews} />
 
                 {/* ═══════════════════════════════════════════════
                     COLLECTION FRANCHISE GRID (If Applicable)
@@ -161,7 +220,13 @@ const Watch = () => {
 
 
             <Footer />
-        </div >
+
+            <TrailerModal
+                isOpen={isTrailerOpen}
+                videoId={movieMeta?.trailerKey}
+                onClose={() => setIsTrailerOpen(false)}
+            />
+        </div>
     );
 };
 
