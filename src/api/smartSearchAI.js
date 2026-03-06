@@ -7,6 +7,10 @@
  * ═══════════════════════════════════════════════════════════════
  */
 
+import { collection, query as firestoreQuery, where, getDocs, addDoc } from "firebase/firestore";
+import { db } from "../firebase";
+import { normalizeSearchQuery } from "./geminiClient";
+
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 const HF_API_KEY = import.meta.env.VITE_HF_API_KEY;
 
@@ -55,8 +59,8 @@ const parseAIResponse = (text) => {
 };
 
 // ── Session Cache ─────────────────────────────────────────────
-const getCache = (query) => {
-    const key = `smart_ai_${query.trim().toLowerCase()}`;
+const getCache = (normalizedQuery) => {
+    const key = `smart_ai_${normalizedQuery}`;
     const cached = sessionStorage.getItem(key);
     if (cached) {
         try {
@@ -66,8 +70,8 @@ const getCache = (query) => {
     return null;
 };
 
-const setCache = (query, data) => {
-    const key = `smart_ai_${query.trim().toLowerCase()}`;
+const setCache = (normalizedQuery, data) => {
+    const key = `smart_ai_${normalizedQuery}`;
     sessionStorage.setItem(key, JSON.stringify(data));
 };
 
@@ -160,33 +164,93 @@ const queryHuggingFace = async (query) => {
  * Returns { titles: string[], provider: 'groq'|'huggingface'|null }
  */
 export const querySmartSearchAI = async (query) => {
-    // Check cache first
-    const cached = getCache(query);
+    const normalizedQuery = normalizeSearchQuery(query);
+
+    // Helper to print a clean table in the console for developers
+    const logAction = (source, meaning) => {
+        const rowLabel = query ? `"${query}"` : "Empty Query";
+        console.table({
+            [rowLabel]: {
+                "Database Lookup Match": normalizedQuery,
+                "Data Source": source,
+                "Explanation": meaning
+            }
+        });
+    };
+
+    // 1. Check Session Cache
+    const cached = getCache(normalizedQuery);
     if (cached) {
-        console.log(`[SmartSearch AI Cache Hit] "${query}" → ${cached.provider}`);
+        logAction(`Session Cache (${cached.provider})`, "Fastest: Instant load from browser memory. 0 API/DB usage.");
         return cached;
     }
 
-    // 1. Try Groq
+    // 2. Check Firestore Global Cache
+    try {
+        const cacheRef = collection(db, "smart_search_cache");
+        const q = firestoreQuery(cacheRef, where("searchQuery", "==", normalizedQuery));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+            logAction("Firestore Database", "Saved API limit: Loaded shared result from DB because another user searched this.");
+            const firestoreData = querySnapshot.docs[0].data();
+            const result = { titles: firestoreData.results, provider: firestoreData.provider || 'firestore_cache' };
+
+            // Save to session cache for quicker subsequent access
+            setCache(normalizedQuery, result);
+            return result;
+        }
+    } catch (dbError) {
+        console.error("[SmartSearch AI] Error checking Firestore cache:", dbError);
+    }
+
+    // 3. Try Groq
+    let result = null;
     const groqTitles = await queryGroq(query);
+
     if (groqTitles) {
-        const result = { titles: groqTitles, provider: 'groq' };
-        setCache(query, result);
-        console.log(`[SmartSearch] Groq returned ${groqTitles.length} titles`);
+        result = { titles: groqTitles, provider: 'groq' };
+    } else {
+        // 4. Try HuggingFace
+        const hfTitles = await queryHuggingFace(query);
+        if (hfTitles) {
+            result = { titles: hfTitles, provider: 'huggingface' };
+        }
+    }
+
+    if (result) {
+        const providerName = result.provider === 'groq' ? "Groq (Llama 3)" : "HuggingFace (Mistral)";
+        logAction(`${providerName} API`, `Cost API limit: Generated ${result.titles.length} completely new title recommendations.`);
+
+        // Save to Session Storage
+        setCache(normalizedQuery, result);
+
+        // Save to Firestore Cache
+        try {
+            const cacheRef = collection(db, "smart_search_cache");
+            const q = firestoreQuery(cacheRef, where("searchQuery", "==", normalizedQuery));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
+                await addDoc(cacheRef, {
+                    searchQuery: normalizedQuery,
+                    results: result.titles,
+                    provider: result.provider,
+                    timestamp: new Date()
+                });
+                console.log(`[SmartSearch AI] Wrote "${query}" to Firestore Global Cache so future users don't need to ask AI.`);
+            } else {
+                console.log(`[SmartSearch AI] Skipping Firestore write. Another process just saved it.`);
+            }
+        } catch (dbError) {
+            console.error("[SmartSearch AI] Error saving to Firestore cache:", dbError);
+        }
+
         return result;
     }
 
-    // 2. Try HuggingFace
-    const hfTitles = await queryHuggingFace(query);
-    if (hfTitles) {
-        const result = { titles: hfTitles, provider: 'huggingface' };
-        setCache(query, result);
-        console.log(`[SmartSearch] HuggingFace returned ${hfTitles.length} titles`);
-        return result;
-    }
-
-    // 3. Both failed
-    console.log('[SmartSearch] All AI providers failed, falling back to keyword parser');
+    // 5. Both failed
+    logAction("Failed", "Both AI APIs failed or are not configured. Falling back to simple keyword parser.");
     return { titles: null, provider: null };
 };
 
