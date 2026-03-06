@@ -171,11 +171,12 @@ export const querySmartSearchAI = async (query) => {
         const rowLabel = query ? `"${query}"` : "Empty Query";
         console.table({
             [rowLabel]: {
+                "Search Query": query,
                 "Database Lookup Match": normalizedQuery,
                 "Data Source": source,
                 "Explanation": meaning
             }
-        });
+        }, ["Database Lookup Match", "Data Source", "Explanation"]);
     };
 
     // 1. Check Session Cache
