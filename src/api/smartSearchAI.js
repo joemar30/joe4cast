@@ -11,8 +11,9 @@ import { collection, query as firestoreQuery, where, getDocs, addDoc } from "fir
 import { db } from "../firebase";
 import { normalizeSearchQuery } from "./geminiClient";
 
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
-const HF_API_KEY = import.meta.env.VITE_HF_API_KEY;
+// Fetch keys directly when running local Vite dev server
+const LOCAL_GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || import.meta.env.GROQ_API;
+const LOCAL_HF_API_KEY = import.meta.env.VITE_HF_API_KEY || import.meta.env.HUGGING_FACE_API;
 
 const GROQ_MODEL = 'llama-3.3-70b-versatile';
 const HF_MODEL = 'mistralai/Mistral-7B-Instruct-v0.3';
@@ -77,18 +78,23 @@ const setCache = (normalizedQuery, data) => {
 
 // ── Groq Provider ─────────────────────────────────────────────
 const queryGroq = async (query) => {
-    if (!GROQ_API_KEY) {
-        console.warn('[SmartSearch] Groq API key not configured, skipping.');
-        return null;
-    }
-
     try {
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        // If we are running Vite locally, skip the Vercel proxy and call Groq directly
+        const isLocalDev = import.meta.env.DEV;
+        const endpoint = isLocalDev ? 'https://api.groq.com/openai/v1/chat/completions' : '/api/groq';
+        const headers = { 'Content-Type': 'application/json' };
+
+        if (isLocalDev) {
+            if (!LOCAL_GROQ_API_KEY) {
+                console.warn('[SmartSearch] Local Groq API key not configured, skipping.');
+                return null;
+            }
+            headers['Authorization'] = `Bearer ${LOCAL_GROQ_API_KEY}`;
+        }
+
+        const response = await fetch(endpoint, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${GROQ_API_KEY}`,
-            },
+            headers,
             body: JSON.stringify({
                 model: GROQ_MODEL,
                 messages: [
@@ -118,18 +124,23 @@ const queryGroq = async (query) => {
 
 // ── HuggingFace Provider ──────────────────────────────────────
 const queryHuggingFace = async (query) => {
-    if (!HF_API_KEY) {
-        console.warn('[SmartSearch] HuggingFace API key not configured, skipping.');
-        return null;
-    }
-
     try {
-        const response = await fetch(`https://api-inference.huggingface.co/models/${HF_MODEL}/v1/chat/completions`, {
+        // If we are running Vite locally, skip the Vercel proxy and call HF directly
+        const isLocalDev = import.meta.env.DEV;
+        const endpoint = isLocalDev ? `https://api-inference.huggingface.co/models/${HF_MODEL}/v1/chat/completions` : '/api/huggingface';
+        const headers = { 'Content-Type': 'application/json' };
+
+        if (isLocalDev) {
+            if (!LOCAL_HF_API_KEY) {
+                console.warn('[SmartSearch] Local HuggingFace API key not configured, skipping.');
+                return null;
+            }
+            headers['Authorization'] = `Bearer ${LOCAL_HF_API_KEY}`;
+        }
+
+        const response = await fetch(endpoint, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${HF_API_KEY}`,
-            },
+            headers,
             body: JSON.stringify({
                 model: HF_MODEL,
                 messages: [
@@ -258,5 +269,8 @@ export const querySmartSearchAI = async (query) => {
  * Check if any AI provider is configured.
  */
 export const hasAIProvider = () => {
-    return !!(GROQ_API_KEY || HF_API_KEY);
+    if (import.meta.env.DEV) {
+        return !!(LOCAL_GROQ_API_KEY || LOCAL_HF_API_KEY);
+    }
+    return true; // Proxy via Vercel removes need for client-side keys check
 };
