@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 import MovieCard from '@/components/common/MovieCard';
 import { fetchTMDB } from '@/api/tmdbClient';
 import './styles.css';
@@ -191,8 +189,6 @@ const AZList = () => {
 
     return (
         <div className="page-wrapper">
-            <Header />
-
             <main className="azlist-main fade-in-up">
                 {/* Breadcrumb */}
                 <div className="azlist-breadcrumb">
@@ -250,8 +246,6 @@ const AZList = () => {
                     </div>
                 )}
             </main>
-
-            <Footer />
         </div>
     );
 };
