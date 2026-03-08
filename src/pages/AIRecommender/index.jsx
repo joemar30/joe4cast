@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 import MovieCard from '@/components/common/MovieCard';
 import { fetchTMDB } from '@/api/tmdbClient';
 import { analyzeTastePreferences } from '@/api/geminiClient';
@@ -166,7 +164,6 @@ const AIRecommender = () => {
 
     return (
         <div className="page-wrapper ai-page">
-            <Header />
             <main className="ai-main fade-in-up">
 
                 <div className="ai-header">
@@ -321,10 +318,8 @@ const AIRecommender = () => {
                             </div>
                         )}
                     </div>
-
                 </div>
             </main>
-            <Footer />
         </div>
     );
 };
