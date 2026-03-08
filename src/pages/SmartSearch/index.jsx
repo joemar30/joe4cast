@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 import MovieCard from '@/components/common/MovieCard';
 import { fetchTMDB } from '@/api/tmdbClient';
 import { parseSmartQuery, buildDiscoverParams } from '@/utils/queryParser';
@@ -263,8 +261,6 @@ const SmartSearch = () => {
 
     return (
         <div className="page-wrapper">
-            <Header />
-
             <main className="smart-main fade-in-up">
                 {/* ── Hero Search Area ── */}
                 <div className="smart-hero">
@@ -450,8 +446,6 @@ const SmartSearch = () => {
                     </>
                 )}
             </main>
-
-            <Footer />
         </div>
     );
 };
