@@ -4,11 +4,11 @@
 
 .settings-page {
     min-height: 100vh;
-    background-color: var(--c-bg);
     color: var(--c-text);
     padding: 2rem;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .settings-header-banner {

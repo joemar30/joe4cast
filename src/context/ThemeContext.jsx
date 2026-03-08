@@ -138,6 +138,13 @@ export const ThemeProvider = ({ children }) => {
             { id: 'dots', name: 'Dots', desc: 'Minimal' },
             { id: 'cross', name: 'Cross', desc: 'Technical' },
             { id: 'waves', name: 'Waves', desc: 'Fluid' },
+            { id: 'stripes', name: 'Stripes', desc: 'Minimalist' },
+            { id: 'blueprint', name: 'Blueprint', desc: 'Architect' },
+            { id: 'bricks', name: 'Bricks', desc: 'Classic mesh' },
+            { id: 'plus', name: 'Plus', desc: 'Technical grid' },
+            { id: 'zigzag', name: 'Zigzag', desc: 'Retro' },
+            { id: 'circles', name: 'Circles', desc: 'Minimal dots' },
+            { id: 'hexagons', name: 'Hexagons', desc: 'Honeycomb' },
             { id: 'none', name: 'None', desc: 'Clean' }
         ]
     };

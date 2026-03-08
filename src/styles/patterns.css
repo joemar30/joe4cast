@@ -1,40 +1,20 @@
 /* ================================================================
-   Vibeo — Background Patterns
-   Responsive and lightweight CSS-only patterns.
+   Vibeo — Background Patterns Entry Point
+   Imports individual pattern files for modularity.
    ================================================================ */
 
-body[data-pattern="grid"] {
-    background-image:
-        linear-gradient(var(--c-border) 1px, transparent 1px),
-        linear-gradient(90deg, var(--c-border) 1px, transparent 1px);
-    background-size: 40px 40px;
-    background-attachment: fixed;
-}
+@import "./patterns/grid.css";
+@import "./patterns/dots.css";
+@import "./patterns/cross.css";
+@import "./patterns/waves.css";
+@import "./patterns/stripes.css";
+@import "./patterns/blueprint.css";
+@import "./patterns/bricks.css";
+@import "./patterns/plus.css";
+@import "./patterns/zigzag.css";
+@import "./patterns/circles.css";
+@import "./patterns/hexagons.css";
 
-body[data-pattern="dots"] {
-    background-image: radial-gradient(var(--c-border) 1.5px, transparent 1.5px);
-    background-size: 24px 24px;
-    background-attachment: fixed;
-}
-
-body[data-pattern="cross"] {
-    background-image:
-        radial-gradient(circle at 50% 50%, var(--c-border) 2px, transparent 0),
-        radial-gradient(circle at 100% 100%, var(--c-border) 2px, transparent 0);
-    background-size: 30px 30px;
-    background-attachment: fixed;
-}
-
-body[data-pattern="waves"] {
-    background:
-        radial-gradient(circle at 100% 50%, transparent 20%, var(--c-border) 21%, var(--c-border) 34%, transparent 35%, transparent),
-        radial-gradient(circle at 0% 50%, transparent 20%, var(--c-border) 21%, var(--c-border) 34%, transparent 35%, transparent) 0 -50px;
-    background-size: 75px 100px;
-    background-attachment: fixed;
-    background-color: var(--c-bg);
-    /* Ensure base color is applied */
-}
-
-body[data-pattern="none"] {
+[data-pattern="none"] body {
     background-image: none;
 }
