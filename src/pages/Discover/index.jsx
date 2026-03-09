@@ -56,7 +56,7 @@ const FilterDropdown = ({ options, value, onChange, labelKey = 'label', valueKey
 
 /* ═══════════════════════════════════════════════════════════════ */
 
-const Browse = () => {
+const Discover = () => {
     const { categoryId } = useParams();
     const navigate = useNavigate();
 
@@ -351,4 +351,4 @@ const Browse = () => {
     );
 };
 
-export default Browse;
+export default Discover;
