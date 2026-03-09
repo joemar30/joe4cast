@@ -1,0 +1,151 @@
+/* ── Card Management (Quick Actions) ── */
+.card-manage-wrapper {
+    position: relative;
+    height: 100%;
+}
+
+/* Remove button for Continue Watching */
+.card-remove-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: auto;
+}
+
+.card-manage-wrapper:hover .card-remove-btn {
+    opacity: 1;
+}
+
+.card-remove-btn:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+}
+
+/* Manage Dropdown for Library */
+.card-actions-dropdown {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 20;
+}
+
+.card-manage-trigger {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-manage-wrapper:hover .card-manage-trigger,
+.card-actions-dropdown.active .card-manage-trigger {
+    opacity: 1;
+}
+
+.card-manage-trigger:hover,
+.card-actions-dropdown.active .card-manage-trigger {
+    background: var(--c-accent);
+    border-color: var(--c-accent-lt);
+    box-shadow: 0 0 15px var(--c-accent-glow);
+}
+
+.manage-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 190px;
+    background: rgba(15, 15, 25, 0.95);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+    border-radius: 12px;
+    padding: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 30;
+    transform-origin: top right;
+}
+
+.manage-menu-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.manage-menu-label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--c-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.5rem 0.75rem 0.3rem;
+}
+
+.manage-menu button {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0.65rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.manage-menu button:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    padding-left: 0.9rem;
+}
+
+.manage-menu-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 6px 0;
+}
+
+.manage-menu-remove {
+    color: #fb7185 !important;
+    /* Rose-400 */
+}
+
+.manage-menu-remove:hover {
+    background: rgba(251, 113, 133, 0.1) !important;
+}
+
+/* Ensure management buttons don't block hover details if we use them later */
+.card-manage-wrapper .mc {
+    margin: 0;
+    width: 100%;
+}
