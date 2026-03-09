@@ -1,0 +1,47 @@
+/* Action Bar */
+.btn-analyze {
+    width: 100%;
+    padding: 1.35rem;
+    background: linear-gradient(135deg, var(--c-accent), var(--c-accent-lt));
+    color: var(--c-bg);
+    font-size: 1.1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: none;
+    border-radius: var(--r-lg);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 15px 35px var(--c-accent-glow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-analyze svg {
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.3));
+}
+
+.btn-analyze:hover:not(:disabled) {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 20px 50px var(--c-accent-glow);
+    filter: brightness(1.1);
+}
+
+.btn-analyze:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+}
+
+.btn-analyze:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    filter: grayscale(1);
+}
+
+.btn-analyze.analyzing {
+    pointer-events: none;
+    background: var(--c-surface3);
+    box-shadow: none;
+}
