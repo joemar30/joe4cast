@@ -1,0 +1,26 @@
+/* ── Main Container ── */
+.smart-main {
+    flex: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 2rem 1.5rem 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* ── Mobile Responsive ── */
+@media (max-width: 850px) {
+    .smart-main {
+        padding: 1.5rem 1rem 4rem;
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .smart-main {
+        padding: 1rem 0.5rem 3rem;
+        gap: 1rem;
+    }
+}
