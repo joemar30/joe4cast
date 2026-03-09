@@ -1,0 +1,104 @@
+/* ── Quick Prompt Chips ── */
+.vibey-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0 16px 12px;
+}
+
+.vibey-chip {
+    padding: 6px 14px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--c-border2);
+    background: var(--c-surface);
+    color: var(--c-text2);
+    font-size: 0.73rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.vibey-chip:hover:not(:disabled) {
+    border-color: var(--c-accent-lt);
+    color: var(--c-accent-lt);
+    background: var(--c-surface2);
+}
+
+.vibey-chip:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── Input Area ── */
+.vibey-input-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    border-top: 1px solid var(--c-border);
+    background: var(--c-surface);
+}
+
+.vibey-input {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: var(--r-md);
+    border: 1px solid var(--c-border);
+    background: var(--c-bg);
+    color: var(--c-text);
+    font-size: 0.85rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.vibey-input::placeholder {
+    color: var(--c-muted);
+}
+
+.vibey-input:focus {
+    border-color: var(--c-accent-lt);
+}
+
+.vibey-input:disabled {
+    opacity: 0.5;
+}
+
+.vibey-send {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--r-md);
+    border: none;
+    background: var(--c-accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.vibey-send:hover:not(:disabled) {
+    background: var(--c-accent-lt);
+    transform: scale(1.05);
+}
+
+.vibey-send:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+@media (max-width: 420px) {
+    .vibey-chips {
+        gap: 5px;
+        padding: 0 12px 10px;
+    }
+
+    .vibey-chip {
+        font-size: 0.68rem;
+        padding: 5px 10px;
+    }
+}
