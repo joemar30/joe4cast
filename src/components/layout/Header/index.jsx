@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { fetchTMDB } from '@/api/tmdbClient';
 import { getUserSearchHistory, saveUserSearchHistory, removeUserSearchHistory } from '@/api/geminiClient';
 import { TMDB_IMAGE_BASE } from '@/config/constants';
+import { Compass, Sparkles, MessageSquare, Heart } from 'lucide-react';
 import StreakCounter from '@/components/common/StreakCounter';
 import './styles.css';
 
@@ -15,16 +16,20 @@ const Header = () => {
     const { currentUser, loginWithGoogle, logout } = useAuth();
     const [search, setSearch] = useState('');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
     // Search dropdown & History state
     const [suggestions, setSuggestions] = useState([]);
     const [searchHistory, setSearchHistory] = useState([]);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [searching, setSearching] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
     const debounceTimer = useRef(null);
     const wrapperRef = useRef(null);
 
     const isOnboardingPage = location.pathname === '/onboarding';
+    const isSettingsPage = location.pathname === '/settings';
+    const showBottomNav = !isOnboardingPage && !isSettingsPage;
 
     /* ── Load Search History on Mount ── */
     useEffect(() => {
@@ -47,6 +52,7 @@ const Header = () => {
         }
 
         setSearching(true);
+
         clearTimeout(debounceTimer.current);
         debounceTimer.current = setTimeout(async () => {
             const data = await fetchTMDB('/search/multi', {
@@ -74,16 +80,58 @@ const Header = () => {
             if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
                 setDropdownOpen(false);
             }
+            // Close user dropdown when clicking outside
+            if (isUserDropdownOpen && !e.target.closest('.topbar__user-container')) {
+                setIsUserDropdownOpen(false);
+            }
         };
         document.addEventListener('mousedown', handleOutsideClick);
         return () => document.removeEventListener('mousedown', handleOutsideClick);
-    }, []);
+    }, [isUserDropdownOpen]);
 
     /* ── Close dropdown on route change ── */
     useEffect(() => {
         setDropdownOpen(false);
+        setIsUserDropdownOpen(false);
         setSearch('');
     }, [location.pathname, location.search]);
+
+    useEffect(() => {
+        if (isMobileMenuOpen) {
+            document.body.classList.add('body-lock');
+            document.documentElement.classList.add('body-lock');
+        } else {
+            document.body.classList.remove('body-lock');
+            document.documentElement.classList.remove('body-lock');
+        }
+        return () => {
+            document.body.classList.remove('body-lock');
+            document.documentElement.classList.remove('body-lock');
+        };
+    }, [isMobileMenuOpen]);
+
+    useEffect(() => {
+        if (showBottomNav) {
+            document.body.classList.add('has-bottom-nav');
+        } else {
+            document.body.classList.remove('has-bottom-nav');
+        }
+        return () => document.body.classList.remove('has-bottom-nav');
+    }, [showBottomNav]);
+
+    /* ── Handle scroll for header styling ── */
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 0) {
+                setScrolled(true);
+            } else {
+                setScrolled(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -141,55 +189,79 @@ const Header = () => {
         return 'Movie';
     };
 
-    const renderActions = (className) => (
+    const renderActions = (className, isMobile = false) => (
         <div className={className}>
             {currentUser ? (
                 <div className="topbar__user-container">
-                    <StreakCounter className="header-streak" />
+                    {!isMobile && <StreakCounter className="header-streak" />}
                     <img
                         src={currentUser.photoURL || `https://ui-avatars.com/api/?name=${currentUser.email}&background=random`}
                         alt={currentUser.displayName || 'User Profile'}
                         className="topbar__user-avatar"
                         referrerPolicy="no-referrer"
+                        onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
                     />
 
-                    <div className="topbar__user-dropdown">
-                        <div className="dropdown-header">
-                            <div className="dropdown-name">{currentUser.displayName || 'User'}</div>
-                            <div className="dropdown-email">{currentUser.email}</div>
-                        </div>
+                    {!isMobile && (
+                        <div className={`topbar__user-dropdown ${isUserDropdownOpen ? 'show' : ''}`}>
+                            <div className="dropdown-header">
+                                <div className="dropdown-name">{currentUser.displayName || 'User'}</div>
+                                <div className="dropdown-email">{currentUser.email}</div>
+                            </div>
 
-                        <div className="dropdown-menu">
-                            <button className="dropdown-item" onClick={() => { setIsMobileMenuOpen(false); navigate('/profile'); setTimeout(() => window.scrollTo(0, 0), 0); }}>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                    <circle cx="12" cy="7" r="4" />
-                                </svg>
-                                Profile
-                            </button>
-                            <button className="dropdown-item" onClick={() => { setIsMobileMenuOpen(false); navigate('/settings'); }}>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <circle cx="12" cy="12" r="3" />
-                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                                </svg>
-                                Settings
-                            </button>
-                        </div>
+                            <div className="dropdown-menu">
+                                <button className="dropdown-item" onClick={() => { setIsMobileMenuOpen(false); navigate('/profile'); setTimeout(() => window.scrollTo(0, 0), 0); }}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                        <circle cx="12" cy="7" r="4" />
+                                    </svg>
+                                    Profile
+                                </button>
+                                <button className="dropdown-item" onClick={() => { setIsMobileMenuOpen(false); navigate('/library'); }}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+                                        <path d="M8 7h6" />
+                                        <path d="M8 11h8" />
+                                        <path d="M8 15h6" />
+                                    </svg>
+                                    My Library
+                                </button>
+                                <button className="dropdown-item" onClick={() => { setIsMobileMenuOpen(false); navigate('/settings'); }}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <circle cx="12" cy="12" r="3" />
+                                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                                    </svg>
+                                    Settings
+                                </button>
+                            </div>
 
-                        <div className="dropdown-actions">
-                            <button className="dropdown-logout" onClick={() => { logout(); setIsMobileMenuOpen(false); }}>
-                                Logout
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                                    <polyline points="16 17 21 12 16 7"></polyline>
-                                    <line x1="21" y1="12" x2="9" y2="12"></line>
-                                </svg>
-                            </button>
+                            <div className="dropdown-actions">
+                                <button className="dropdown-logout" onClick={() => { logout(); setIsMobileMenuOpen(false); }}>
+                                    Logout
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                        <polyline points="16 17 21 12 16 7"></polyline>
+                                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    )}
+
+                    {isMobile && (
+                        <div className="topbar__mobile-user-hero">
+                            <div className="mobile-user-hero__info">
+                                <StreakCounter className="mobile-streak" />
+                                <div className="mobile-user-details">
+                                    <div className="mobile-dropdown-name">{currentUser.displayName || 'User'}</div>
+                                    <div className="mobile-dropdown-email">{currentUser.email}</div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             ) : (
-                <button className="topbar__login-btn" onClick={loginWithGoogle}>
+                <button className={`topbar__login-btn ${isMobile ? 'mobile-large' : ''}`} onClick={loginWithGoogle}>
                     Login
                 </button>
             )}
@@ -197,7 +269,11 @@ const Header = () => {
     );
 
     return (
-        <header className="topbar" role="banner">
+        <>
+            <header 
+                className={`topbar ${scrolled ? 'topbar--scrolled' : ''}`}
+                style={isMobileMenuOpen ? { position: 'fixed', width: '100%', top: 0 } : {}}
+            >
             <div className="topbar__inner">
                 <button className="topbar__logo" onClick={() => navigate('/')} aria-label="Vibeo Home">
                     <img src="/vibeo.png" alt="Vibeo" className="topbar__logo-img" />
@@ -208,35 +284,74 @@ const Header = () => {
                 </button>
 
                 {!isOnboardingPage && (
+                    <nav className="topbar__nav-links" aria-label="Desktop Navigation">
+                        {[
+                            { label: 'Discover', path: '/discover/trending' },
+                            { label: 'Smart Search', path: '/smart-search' },
+                            { label: 'Vibey', path: '/vibey' },
+                            { label: 'Taste Matcher', path: '/taste-matcher' },
+                        ].map(link => {
+                            const isActive = location.pathname === link.path || (link.path.startsWith('/discover') && location.pathname.startsWith('/discover'));
+                            return (
+                                <button
+                                    key={link.label}
+                                    className={`topbar__nav-link ${isActive ? 'active' : ''}`}
+                                    onClick={() => navigate(link.path)}
+                                >
+                                    {link.label}
+                                </button>
+                            );
+                        })}
+                    </nav>
+                )}
+
+                {!isOnboardingPage && (
                     <>
-                        <nav className={`topbar__nav ${isMobileMenuOpen ? 'mobile-open' : ''}`} aria-label="Site Navigation">
-                            <div className="topbar__nav-links">
-                                {[
-                                    { label: 'Discover', path: '/discover/trending' },
-                                    { label: 'Smart Search', path: '/smart-search' },
-                                    { label: 'Vibey', path: '/vibey' },
-                                    { label: 'Taste Matcher', path: '/taste-matcher' },
-                                ].map(link => {
-                                    const isActive = location.pathname === link.path || (link.path.startsWith('/discover') && location.pathname.startsWith('/discover'));
-                                    return (
-                                        <button
-                                            key={link.label}
-                                            className={`topbar__nav-link ${isActive ? 'active' : ''}`}
-                                            onClick={() => {
-                                                navigate(link.path);
-                                                setIsMobileMenuOpen(false);
-                                            }}
-                                        >
-                                            {link.label}
+                        <nav className={`topbar__mobile-drawer ${isMobileMenuOpen ? 'mobile-open' : ''}`} aria-label="Mobile Menu">
+                            <div className="topbar__mobile-menu-content">
+                                {renderActions("topbar__mobile-user-section", true)}
+                                
+                                <div className="topbar__mobile-sub-actions">
+                                    <button className="mobile-sub-item" onClick={() => { setIsMobileMenuOpen(false); navigate('/profile'); }}>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                            <circle cx="12" cy="7" r="4" />
+                                        </svg>
+                                        Profile
+                                    </button>
+                                    <button className="mobile-sub-item" onClick={() => { setIsMobileMenuOpen(false); navigate('/library'); }}>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+                                            <path d="M8 7h6" />
+                                            <path d="M8 11h8" />
+                                            <path d="M8 15h6" />
+                                        </svg>
+                                        My Library
+                                    </button>
+                                    <button className="mobile-sub-item" onClick={() => { setIsMobileMenuOpen(false); navigate('/settings'); }}>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <circle cx="12" cy="12" r="3" />
+                                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                                        </svg>
+                                        Settings
+                                    </button>
+
+                                    {currentUser && (
+                                        <button className="mobile-logout-btn" onClick={() => { logout(); setIsMobileMenuOpen(false); }}>
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                                <polyline points="16 17 21 12 16 7"></polyline>
+                                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                                            </svg>
+                                            Logout
                                         </button>
-                                    );
-                                })}
+                                    )}
+                                </div>
                             </div>
-                            {renderActions("topbar__mobile-actions")}
                         </nav>
 
                         <div className="topbar__right">
-                            {!isOnboardingPage && (
+                            {!isOnboardingPage && !isMobileMenuOpen && (
                                 <div className="topbar__search-wrapper" ref={wrapperRef}>
                                     <form
                                         className={`topbar__search ${dropdownOpen ? 'dropdown-active' : ''}`}
@@ -387,7 +502,40 @@ const Header = () => {
                     </>
                 )}
             </div>
-        </header>
+            </header>
+
+            {isMobileMenuOpen && <div className="mobile-menu-overlay" onClick={() => setIsMobileMenuOpen(false)} />}
+
+            {/* Global Mobile Bottom Navigation */}
+            {showBottomNav && (
+                <nav className="mobile-bottom-nav">
+                {[
+                    { label: 'Discover', path: '/discover/trending', icon: Compass },
+                    { label: 'Smart Search', path: '/smart-search', icon: Sparkles },
+                    { label: 'Vibey', path: '/vibey', icon: MessageSquare },
+                    { label: 'Taste Matcher', path: '/taste-matcher', icon: Heart },
+                ].map(link => {
+                    const isActive = location.pathname === link.path || (link.path.startsWith('/discover') && location.pathname.startsWith('/discover'));
+                    const Icon = link.icon;
+                    return (
+                        <button
+                            key={link.label}
+                            className={`mobile-bottom-nav-item ${isActive ? 'active' : ''}`}
+                            onClick={() => {
+                                navigate(link.path);
+                                setIsMobileMenuOpen(false);
+                            }}
+                        >
+                            <span className="icon">
+                                <Icon size={20} />
+                            </span>
+                            <span className="label">{link.label}</span>
+                        </button>
+                    );
+                })}
+                </nav>
+            )}
+        </>
     );
 };
 
