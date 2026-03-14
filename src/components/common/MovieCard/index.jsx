@@ -116,6 +116,23 @@ const MovieCard = React.memo(({ movie, onClick, animationDelay = '0ms', showMatc
                     )}
 
                     {overview && <p className="mc__details-synopsis">{overview}</p>}
+
+                    {(movie.cast || movie.director) && (
+                        <div className="mc__details-crew">
+                            {movie.director && (
+                                <div className="mc__crew-item">
+                                    <span className="mc__crew-label">Director:</span>
+                                    <span className="mc__crew-val">{movie.director}</span>
+                                </div>
+                            )}
+                            {movie.cast && (
+                                <div className="mc__crew-item">
+                                    <span className="mc__crew-label">Starring:</span>
+                                    <span className="mc__crew-val">{Array.isArray(movie.cast) ? movie.cast.slice(0, 3).join(', ') : movie.cast}</span>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 <div className="mc__details-bottom">
