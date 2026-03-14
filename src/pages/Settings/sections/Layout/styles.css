@@ -256,31 +256,35 @@
 .interval-selector {
     display: flex;
     gap: 8px;
-    background: var(--c-bg2);
-    padding: 4px;
-    border-radius: var(--r-md);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 6px;
+    border-radius: var(--r-pill);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
 }
 
 .interval-btn {
-    padding: 6px 16px;
-    border-radius: var(--r-sm);
-    border: none;
+    padding: 8px 18px;
+    border-radius: var(--r-pill);
+    border: 1px solid transparent;
     background: transparent;
     color: var(--c-muted);
     font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.interval-btn:hover {
+.interval-btn:hover:not(.active) {
     color: var(--c-text);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .interval-btn.active {
     background: var(--c-accent);
     color: #ffffff;
-    box-shadow: 0 4px 12px var(--c-accent-glow);
+    box-shadow: 0 4px 15px var(--c-accent-glow);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Quality Selector */
