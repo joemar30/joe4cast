@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Database, Layout, Server, Cpu, Globe, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Database, Layout, Server, Cpu, Globe, ArrowRight, ShieldCheck, Network } from 'lucide-react';
 
 const FlowNode = ({ icon: Icon, title, desc, color, pulse = false, delay = 0 }) => (
     <div style={{
@@ -167,6 +167,35 @@ const ArchitectureSection = () => {
                     <FlowPath color="166, 227, 161" active={true} delay={0.7} />
                     
                     <FlowNode icon={Layout} title="App UI Render" desc="Hydrates Dashboard with personalized data" color="166, 227, 161" delay={0.9} />
+                </div>
+            </div>
+
+            {/* FLOW 4: Onboarding Flow */}
+            <div style={{
+                background: 'var(--c-bg)',
+                borderRadius: '24px',
+                padding: '40px',
+                border: '1px solid var(--c-surface2)',
+                position: 'relative',
+                overflow: 'hidden',
+                marginTop: '24px'
+            }}>
+                <h3 style={{ color: 'var(--c-text)', marginBottom: '40px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <Network size={24} color="#f9e2af" />
+                    Onboarding Routing Intercepts
+                </h3>
+                
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap' }}>
+                    <FlowNode icon={Layout} title="App.jsx" desc="Root Router evaluates user auth" color="203, 166, 247" delay={0.1} />
+                    <FlowPath color="137, 180, 250" active={true} delay={0.3} />
+                    
+                    <FlowNode icon={Network} title="Is Logged In?" desc="Checks currentUser via AuthContext" color="137, 180, 250" pulse={true} delay={0.5} />
+                    <FlowPath color="249, 226, 175" active={true} delay={0.7} />
+                    
+                    <FlowNode icon={Database} title="Is isOnboarded true?" desc="Checks Firestore User document" color="249, 226, 175" pulse={true} delay={0.9} />
+                    <FlowPath color="166, 227, 161" active={true} delay={1.1} />
+                    
+                    <FlowNode icon={Layout} title="Allow Access" desc="Renders Home Dashboard (/)" color="166, 227, 161" delay={1.3} />
                 </div>
             </div>
 

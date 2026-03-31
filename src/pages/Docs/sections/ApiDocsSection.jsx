@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Send, Activity, ShieldAlert, Key } from 'lucide-react';
+import { Send, Activity, ShieldAlert, Key, UserCheck, ShieldOff } from 'lucide-react';
 import CodeBlock from '../components/CodeBlock';
+import { useAuth } from '../../../context/AuthContext';
 
 const ApiTesterCard = ({ title, method, endpoint, description, demoBody, apiCallHandler }) => {
     const [response, setResponse] = useState(null);
@@ -127,6 +128,63 @@ const ApiTesterCard = ({ title, method, endpoint, description, demoBody, apiCall
     );
 };
 
+const AuthStatusCard = () => {
+    const { currentUser } = useAuth();
+    
+    return (
+        <div style={{
+            background: 'var(--c-bg)',
+            borderRadius: '16px',
+            border: `1px solid ${currentUser ? '#a6e3a1' : '#f38ba8'}`,
+            overflow: 'hidden',
+            marginBottom: '40px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+        }}>
+            <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '20px 24px', borderBottom: '1px solid var(--c-surface2)',
+                background: currentUser ? 'rgba(166, 227, 161, 0.05)' : 'rgba(243, 139, 168, 0.05)'
+            }}>
+                <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                        <span style={{
+                            background: 'rgba(203, 166, 247, 0.2)', color: '#cba6f7',
+                            padding: '4px 10px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '1px'
+                        }}>AUTH</span>
+                        <code style={{ color: 'var(--c-text)', fontSize: '1rem', fontWeight: 600 }}>SDK: Firebase/Auth</code>
+                    </div>
+                    <p style={{ margin: 0, color: 'var(--c-text2)', fontSize: '0.9rem' }}>Live Session Validation</p>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: currentUser ? '#a6e3a1' : '#f38ba8', fontWeight: 700 }}>
+                    {currentUser ? <UserCheck size={20} /> : <ShieldOff size={20} />}
+                    {currentUser ? 'AUTHENTICATED' : 'ANONYMOUS'}
+                </div>
+            </div>
+            
+            <div style={{ padding: '24px' }}>
+                <p style={{ color: 'var(--c-text2)', marginBottom: '16px', lineHeight: '1.5' }}>
+                    Unlike static REST endpoints, Authentication uses an active listener via React Context. 
+                    This verifies if the Firebase JWT is valid and stored in the browser.
+                </p>
+                
+                <h5 style={{ color: currentUser ? '#a6e3a1' : '#f38ba8', fontSize: '0.85rem', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                    Current User object
+                </h5>
+                <CodeBlock 
+                    code={JSON.stringify(currentUser ? {
+                        uid: currentUser.uid,
+                        email: currentUser.email,
+                        emailVerified: currentUser.emailVerified,
+                        isAnonymous: currentUser.isAnonymous,
+                        providerId: currentUser.providerData[0]?.providerId
+                    } : { error: "No active session. Please log in to view Auth data." }, null, 2)} 
+                    language="json" 
+                />
+            </div>
+        </div>
+    );
+};
+
 const ApiDocsSection = () => {
 
     // Dummy handler for demo purposes - hits real TMDB API but just trending
@@ -139,6 +197,16 @@ const ApiDocsSection = () => {
         return { page: data.page, results: data.results.slice(0, 2), total_pages: data.total_pages }; // truncate for display
     };
 
+    // Handler to show specific URL parameter fetching (Movie Credits)
+    const fetchCredits = async () => {
+        const key = import.meta.env.VITE_TMDB_API_KEY;
+        const movieId = 157336; // Interstellar
+        const res = await fetch(`https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${key}`);
+        if (!res.ok) throw new Error("TMDB fetch failed");
+        const data = await res.json();
+        return { id: data.id, cast: data.cast.slice(0, 3), crew: data.crew.slice(0, 1) }; // truncate
+    };
+
     // Handler for Groq serverless with robust local dev fallback
     const fetchGroq = async () => {
         const body = {
@@ -147,46 +215,57 @@ const ApiDocsSection = () => {
         };
 
         try {
-            // Primary attempt: Hit our Vercel Serverless Function
             const res = await fetch('/api/groq', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });
-            
-            // If we get an HTML response (like index.html SPA fallback), trigger the catch block
             const contentType = res.headers.get("content-type");
             if (res.ok && contentType && contentType.includes("application/json")) {
                 return await res.json();
             }
             throw new Error("Local proxy not available");
-
         } catch (err) {
-            // Localhood Fallback: If 'npm run dev' is used instead of 'vercel dev',
-            // the /api/groq proxy won't work. We fallback to making a direct client request
-            // using the Vite exposed key just so the demo doesn't break!
-            console.log("Docs Playground: Using direct Groq API fallback for local dev mode.");
-            
             const key = import.meta.env.VITE_GROQ_API_KEY;
             const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${key}`,
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });
-            
-            if (!res.ok) {
-                const text = await res.text();
-                throw new Error(text || "Direct Groq fetch failed");
-            }
-            
+            if (!res.ok) throw new Error("Direct Groq fetch failed");
             const data = await res.json();
-            return {
-                _dev_note: "Response served via direct API fallback (Vercel serverless proxy not detected in local dev).",
-                ...data
-            };
+            return { _dev_note: "Response served via direct API fallback", ...data };
+        }
+    };
+
+    // Handler for HuggingFace serverless with robust local dev fallback
+    const fetchHF = async () => {
+        const body = {
+            model: "mistralai/Mistral-7B-Instruct-v0.3",
+            messages: [{ role: "user", content: "Tell me a short 1 sentence movie quote." }]
+        };
+
+        try {
+            const res = await fetch('/api/huggingface', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const contentType = res.headers.get("content-type");
+            if (res.ok && contentType && contentType.includes("application/json")) {
+                return await res.json();
+            }
+            throw new Error("Local proxy not available");
+        } catch (err) {
+            const key = import.meta.env.VITE_HF_API_KEY || import.meta.env.HUGGING_FACE_API;
+            const res = await fetch(`https://api-inference.huggingface.co/models/${body.model}/v1/chat/completions`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            if (!res.ok) throw new Error("Direct HF fetch failed");
+            const data = await res.json();
+            return { _dev_note: "Response served via direct API fallback", ...data };
         }
     };
 
@@ -203,6 +282,8 @@ const ApiDocsSection = () => {
                 </div>
             </div>
 
+            <AuthStatusCard />
+
             <ApiTesterCard 
                 title="Vercel Serverless Function — Groq Integration"
                 method="POST"
@@ -218,9 +299,29 @@ const ApiDocsSection = () => {
             <ApiTesterCard 
                 title="TMDB API Fetch — Movies Data"
                 method="GET"
-                endpoint="api.themoviedb.org/3/trending"
-                description="External API call to The Movie Database to fetch current trending items. Shows pagination handling and JSON data structures."
+                endpoint="https://api.themoviedb.org/3/trending/movie/day"
+                description="External API call to The Movie Database to fetch current trending items. Shows pagination handling and JSON array structures."
                 apiCallHandler={fetchTMDB}
+            />
+
+            <ApiTesterCard 
+                title="TMDB API Fetch — Movie Credits"
+                method="GET"
+                endpoint="https://api.themoviedb.org/3/movie/{movieId}/credits"
+                description="Fetches the cast and crew for a specific movie (Interstellar). Demonstrates passing dynamic URL parameters to an external API."
+                apiCallHandler={fetchCredits}
+            />
+
+            <ApiTesterCard 
+                title="Vercel Serverless Function — HuggingFace Integration"
+                method="POST"
+                endpoint="/api/huggingface"
+                description="Backup AI provider. If Groq fails, this proxy sends the chat payload to HuggingFace Inference Endpoints running Mistral 7B."
+                demoBody={JSON.stringify({
+                    model: "mistralai/Mistral-7B-Instruct-v0.3",
+                    messages: [{ role: "user", content: "Tell me a short 1 sentence movie quote." }]
+                }, null, 2)}
+                apiCallHandler={fetchHF}
             />
 
         </div>

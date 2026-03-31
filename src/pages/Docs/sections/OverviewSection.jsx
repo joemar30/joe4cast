@@ -1,5 +1,28 @@
 import React from 'react';
-import { CheckCircle, Info } from 'lucide-react';
+import { CheckCircle, Info, Zap, Code2, Database, Cloud, Palette, Layers, Terminal, Activity } from 'lucide-react';
+
+const TechBadge = ({ icon: Icon, label, color }) => (
+    <div style={{
+        display: 'flex', alignItems: 'center', gap: '8px',
+        background: `rgba(${color}, 0.1)`, 
+        border: `1px solid rgba(${color}, 0.2)`,
+        padding: '8px 16px', borderRadius: '12px',
+        color: `rgb(${color})`, fontWeight: 600, fontSize: '0.9rem'
+    }}>
+        <Icon size={18} /> {label}
+    </div>
+);
+
+const MetricBlock = ({ icon: Icon, value, label }) => (
+    <div style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
+        padding: '16px', flex: 1, textAlign: 'center'
+    }}>
+        <Icon size={24} color="var(--c-text2)" style={{ marginBottom: '8px' }} />
+        <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--c-text)' }}>{value}</span>
+        <span style={{ fontSize: '0.85rem', color: 'var(--c-text2)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>{label}</span>
+    </div>
+);
 
 const ChecklistItem = ({ title, status, explanation }) => (
     <div style={{
@@ -45,17 +68,6 @@ const OverviewSection = () => {
                     fontWeight: 800,
                     letterSpacing: '-1px'
                 }}>Project Overview</span>
-                <div style={{
-                    padding: '6px 16px',
-                    background: 'rgba(166, 227, 161, 0.1)',
-                    color: '#a6e3a1',
-                    borderRadius: '20px',
-                    fontSize: '0.9rem',
-                    fontWeight: 600,
-                    border: '1px solid rgba(166, 227, 161, 0.2)'
-                }}>
-                    v1.0.0
-                </div>
             </div>
 
             <p style={{
@@ -65,9 +77,33 @@ const OverviewSection = () => {
                 marginBottom: '40px',
                 maxWidth: '800px'
             }}>
-                Vibeo is a modern media discovery platform built with Vite, React, and Firebase.
+                Vibeo is a modern media discovery platform designed with premium UI patterns.
                 This documentation hub proves the correct implementation of the required system architecture.
             </p>
+
+            {/* Tech Stack Badges */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '40px' }}>
+                <TechBadge icon={Code2} label="React 19" color="137, 180, 250" />
+                <TechBadge icon={Zap} label="Vite" color="249, 226, 175" />
+                <TechBadge icon={Database} label="Firebase NoSQL" color="250, 179, 135" />
+                <TechBadge icon={Cloud} label="Vercel Edge" color="205, 214, 244" />
+                <TechBadge icon={Palette} label="Tailwind CSS v4" color="137, 220, 235" />
+            </div>
+
+            {/* Metrics Bar */}
+            <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                background: 'var(--c-bg)', borderRadius: '16px', border: '1px solid var(--c-surface2)',
+                marginBottom: '48px', overflow: 'hidden'
+            }}>
+                <MetricBlock icon={Layers} value="15+" label="Custom Components" />
+                <div style={{ width: '1px', background: 'var(--c-surface2)', height: '60px' }} />
+                <MetricBlock icon={Activity} value="5" label="External APIs" />
+                <div style={{ width: '1px', background: 'var(--c-surface2)', height: '60px' }} />
+                <MetricBlock icon={Database} value="3" label="NoSQL Collections" />
+                <div style={{ width: '1px', background: 'var(--c-surface2)', height: '60px' }} />
+                <MetricBlock icon={Terminal} value="2" label="Serverless Functions" />
+            </div>
 
             <h3 style={{
                 fontSize: '1.5rem',
@@ -102,6 +138,16 @@ const OverviewSection = () => {
                     title="4. Postman & Swagger Validation"
                     status={true}
                     explanation="Instead of static Swagger docs, we built this fully interactive React Documentation Dashboard directly into the app."
+                />
+                <ChecklistItem
+                    title="5. State & Data Flow"
+                    status={true}
+                    explanation="Utilizes React Context API to manage global Authentication scope and User Data without prop-drilling."
+                />
+                <ChecklistItem
+                    title="6. AI Integration (Bonus Feature)"
+                    status={true}
+                    explanation="Seamless integration with Llama 3 AI models via Groq Serverless proxies to power the interactive 'Vibey' assistant."
                 />
             </div>
 

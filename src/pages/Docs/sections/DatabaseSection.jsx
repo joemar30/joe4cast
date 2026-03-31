@@ -1,5 +1,5 @@
 import React from 'react';
-import { Database, Key, LayoutList, Fingerprint, History } from 'lucide-react';
+import { Database, Key, LayoutList, Fingerprint, History, Palette } from 'lucide-react';
 import CodeBlock from '../components/CodeBlock';
 
 const SchemaCard = ({ title, icon: Icon, description, documentShape }) => (
@@ -99,6 +99,18 @@ const DatabaseSection = () => {
                     "poster_path": "/b4iI2NogZ2rDtsZ7L1j9m7G1oM8.jpg",
                     "lastWatchedAt": "Timestamp(March 31, 2026 at 2:00:00 PM UTC+8)",
                     "progress": 0.55 // Percentage
+                }, null, 2)}
+            />
+
+            <SchemaCard
+                title="Theme Settings Sub-collection"
+                icon={Palette}
+                description="Persists user UI preferences globally: /users/{uid}/settings/theme."
+                documentShape={JSON.stringify({
+                    "mode": "dark",
+                    "accentColor": "#cba6f7",
+                    "reducedMotion": false,
+                    "updatedAt": "Timestamp(March 31, 2026 at 2:15:00 PM UTC+8)"
                 }, null, 2)}
             />
 
