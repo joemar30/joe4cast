@@ -16,13 +16,6 @@
     gap: 4rem;
 }
 
-@media (max-width: 768px) {
-    .profile-dashboard {
-        padding: 1.5rem 0.5rem 4rem;
-        gap: 2rem;
-    }
-}
-
 .dashboard-section h2 {
     font-size: 1.6rem;
     font-weight: 800;
@@ -31,6 +24,10 @@
 }
 
 @media (max-width: 768px) {
+    .profile-main {
+        padding-bottom: 2rem;
+    }
+
     .profile-dashboard {
         padding: 2rem 1.25rem 4rem;
         gap: 2.5rem;
@@ -38,12 +35,6 @@
 
     .dashboard-section h2 {
         font-size: 1.4rem;
-    }
-}
-
-@media (max-width: 768px) {
-    .profile-main {
-        padding-bottom: 2rem;
     }
 }
 

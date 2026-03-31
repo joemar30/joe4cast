@@ -27,7 +27,7 @@
     position: relative;
     z-index: 1;
     width: 100%;
-    max-width: 1300px;
+    max-width: 1500px;
     padding: 0 2rem;
     margin: 0 auto;
 }
@@ -36,6 +36,7 @@
     display: flex;
     flex-direction: column;
     gap: 2.5rem;
+    min-width: 0;
 }
 
 .hub-activity-row {
@@ -51,8 +52,12 @@
     align-items: start;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1200px) {
     .hub-dashboard-header {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 2rem;
         grid-template-columns: 1fr;
     }
 }

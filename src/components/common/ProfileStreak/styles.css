@@ -1,7 +1,6 @@
 .profile-streak-card {
     width: 100%;
-    max-width: 900px;
-    margin: 1rem auto;
+    margin: 0;
     background: rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -149,7 +148,7 @@
 .count-number {
     font-size: 4rem;
     font-weight: 900;
-    line-height: 1.1; /* Fix for clipped numbers */
+    line-height: 1; /* Fix for clipped numbers */
     background: linear-gradient(135deg, var(--c-text), var(--streak-color));
     -webkit-background-clip: text;
     background-clip: text;
@@ -313,33 +312,88 @@
 
 /* Mobile Adjustments */
 @media (max-width: 600px) {
+
+    /* MAIN LAYOUT */
     .streak-main-display {
-        flex-direction: column;
-        text-align: center;
-        gap: 1.25rem;
+        flex-direction: row;
+        align-items: center;
+        gap: 1rem;
+        text-align: left; 
     }
 
+    /* Flame */
+    .main-flame-icon {
+        width: 50px;
+        height: 50px;
+    }
+
+    .streak-fire-platform {
+        flex-shrink: 0;
+    }
+
+    /* TEXT CONTAINER */
     .streak-stats-info {
-        text-align: center;
-        align-items: center;
+        align-items: flex-start; 
+        text-align: left;
+        gap: 0.5rem;
+        width: 100%;
     }
 
+    /* NUMBER + LABEL INLINE */
     .streak-count-wrapper {
-        flex-direction: column;
-        gap: 0.25rem;
+        flex-direction: row;
         align-items: center;
+        gap: 0.75rem;
     }
 
     .count-number {
-        font-size: 3rem;
+        font-size: 2.4rem; 
+        line-height: 1;
     }
 
-    .streak-weekly-map {
+    .count-label h3 {
+        font-size: 1rem;
+        line-height: 1.2;
+    }
+
+    .count-label p {
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+    }
+
+    /* PROGRESS */
+    .streak-milestone-hint {
+        width: 100%;
         gap: 0.4rem;
     }
 
+    .hint-progress-bar {
+        width: 100%;
+        height: 5px; 
+    }
+
+    .streak-milestone-hint span {
+        font-size: 0.7rem;
+    }
+
+    /* WEEKLY ROW */
+    .streak-weekly-map {
+        padding-top: 1rem;
+        gap: 0.3rem;
+    }
+
+    .day-node {
+        gap: 0.35rem;
+    }
+
     .node-circle {
-        width: 28px;
-        height: 28px;
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
+    }
+
+    .day-label {
+        font-size: 0.6rem;
     }
 }
+
