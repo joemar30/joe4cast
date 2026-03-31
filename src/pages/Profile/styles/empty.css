@@ -58,3 +58,44 @@
     transform: translateY(-3px);
     box-shadow: 0 15px 30px rgba(168, 85, 247, 0.3);
 }
+
+@media (max-width: 768px) {
+    .dashboard-empty {
+        padding: 4rem 1.5rem;
+        border-radius: 20px;
+    }
+
+    .empty-icon-wrapper {
+        width: 80px;
+        height: 80px;
+    }
+
+    .dashboard-empty h3 {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-empty {
+        padding: 3rem 1rem;
+        border-radius: 16px;
+    }
+
+    .empty-icon-wrapper {
+        width: 64px;
+        height: 64px;
+    }
+
+    .dashboard-empty h3 {
+        font-size: 1.1rem;
+    }
+
+    .dashboard-empty p {
+        font-size: 0.9rem;
+    }
+
+    .empty-cta-btn {
+        width: 100%;
+        text-align: center;
+    }
+}
