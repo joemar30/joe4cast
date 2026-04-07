@@ -1,5 +1,6 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+import os
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -136,3 +137,36 @@ class SyncStatsView(APIView):
             import traceback
             print(traceback.format_exc())
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class HealthCheckView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    
+    def get(self, request):
+        try:
+            # Test DB connection
+            UserStat.objects.count()
+            db_status = "Connected"
+        except Exception as e:
+            db_status = f"Error: {str(e)}"
+            
+        return Response({
+            "status": "Alive",
+            "database": db_status,
+            "debug": str(os.environ.get('DEBUG', 'False')),
+            "secret_key_set": str(bool(os.environ.get('SECRET_KEY')))
+        })
+
+class MigrateDatabaseView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    
+    def get(self, request):
+        from django.core.management import call_command
+        try:
+            # Force run migrations in-process
+            # Using stdout to capture output
+            import io
+            out = io.StringIO()
+            call_command('migrate', interactive=False, stdout=out)
+            return Response({"status": "Success", "output": out.getvalue()})
+        except Exception as e:
+            return Response({"status": "Error", "message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
