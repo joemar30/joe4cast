@@ -84,6 +84,12 @@ const EnvironmentSection = () => {
                     <div style={{ padding: '12px 20px', background: 'rgba(0,0,0,0.2)', color: '#fab387', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '2px' }}>AI SERVICES (SERVERLESS)</div>
                     <EnvRow name="VITE_GROQ_API_KEY" value={envs.VITE_GROQ_API_KEY} isOptional={true} />
                     <EnvRow name="VITE_HF_API_KEY" value={envs.VITE_HF_API_KEY} isOptional={true} />
+
+                    {/* SQL Backend */}
+                    <div style={{ padding: '12px 20px', background: 'rgba(0,0,0,0.2)', color: '#f38ba8', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '2px' }}>BACKEND (DJANGO / SQL)</div>
+                    <div style={{ padding: '16px 20px', borderBottom: '1px solid #313244', fontSize: '0.9rem', color: '#a6adc8' }}>
+                         Check <code>backend/.env</code> for global configuration.
+                    </div>
                 </div>
                 
                 {/* Footer Status */}
@@ -92,13 +98,46 @@ const EnvironmentSection = () => {
                     background: '#11111b',
                     display: 'flex',
                     alignItems: 'center',
+                    justifyContent: 'space-between',
                     gap: '12px',
                     color: '#a6e3a1',
                     fontSize: '0.9rem',
                     fontWeight: 600
                 }}>
-                    <Shield size={18} />
-                    <span>System is secure and initialized successfully.</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <Shield size={18} />
+                        <span>System is secure and initialized successfully.</span>
+                    </div>
+                    <span style={{ color: '#89b4fa', opacity: 0.8 }}>Relational DB Connected</span>
+                </div>
+            </div>
+
+            {/* HTTPie Guide */}
+            <div style={{ marginTop: '60px' }}>
+                <h3 style={{ fontSize: '1.5rem', color: 'var(--c-text)', marginBottom: '16px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <Terminal size={24} color="#89b4fa" />
+                    Local API Testing (HTTPie)
+                </h3>
+                <p style={{ color: 'var(--c-text2)', fontSize: '1rem', lineHeight: '1.6', marginBottom: '24px' }}>
+                    For rapid backend testing, we use <strong>HTTPie</strong>. This ensures our Django/Postgres bridge is fully functional before deploying to Vercel.
+                </p>
+
+                <div style={{ background: 'var(--c-surface)', padding: '24px', borderRadius: '16px', border: '1px solid var(--c-surface2)' }}>
+                    <h5 style={{ color: 'var(--c-text)', margin: '0 0 12px 0', fontSize: '0.9rem', textTransform: 'uppercase', opacity: 0.7 }}>Fetch Leaderboard (GET)</h5>
+                    <div style={{ background: '#11111b', padding: '16px', borderRadius: '12px', marginBottom: '24px', border: '1px solid #313244' }}>
+                        <code style={{ color: '#f9e2af' }}>python -m httpie GET http://localhost:8000/api/leaderboard/</code>
+                    </div>
+
+                    <h5 style={{ color: 'var(--c-text)', margin: '0 0 12px 0', fontSize: '0.9rem', textTransform: 'uppercase', opacity: 0.7 }}>Sync User Stats (POST)</h5>
+                    <div style={{ background: '#11111b', padding: '16px', borderRadius: '12px', border: '1px solid #313244' }}>
+                        <code style={{ color: '#f9e2af' }}>
+                            python -m httpie POST http://localhost:8000/api/sync-stats/ \<br/>
+                            firebase_uid="test_user" \<br/>
+                            username="VibeoTesting" \<br/>
+                            total_watch_time:=45000 \<br/>
+                            current_streak:=15
+                        </code>
+                    </div>
                 </div>
             </div>
 
