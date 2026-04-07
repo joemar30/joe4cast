@@ -1,24 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import { fetchLeaderboard } from '@/api/djangoClient';
-import { Trophy, Flame, Play, ArrowLeft } from 'lucide-react';
+import { Trophy, Flame, Play, ArrowLeft, RefreshCcw, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useUserMoviesContext } from '@/context/UserMoviesContext';
 import './styles.css';
 
 const Leaderboard = () => {
     const [stats, setStats] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [syncing, setSyncing] = useState(false);
+    const [syncSuccess, setSyncSuccess] = useState(false);
     const [view, setView] = useState('streak'); // 'streak' or 'watchtime'
     const navigate = useNavigate();
+    const { syncToBackend } = useUserMoviesContext();
+
+    const loadLeaderboard = async () => {
+        setLoading(true);
+        const data = await fetchLeaderboard();
+        setStats(data);
+        setLoading(false);
+    };
 
     useEffect(() => {
-        const loadLeaderboard = async () => {
-            setLoading(true);
-            const data = await fetchLeaderboard();
-            setStats(data);
-            setLoading(false);
-        };
         loadLeaderboard();
     }, []);
+
+    const handleManualSync = async () => {
+        setSyncing(true);
+        setSyncSuccess(false);
+        try {
+            await syncToBackend();
+            setSyncSuccess(true);
+            // Refresh the data after sync
+            await loadLeaderboard();
+            setTimeout(() => setSyncSuccess(false), 3000);
+        } catch (err) {
+            console.error('Manual sync failed:', err);
+        } finally {
+            setSyncing(false);
+        }
+    };
 
     const formatTime = (seconds) => {
         const hrs = Math.floor(seconds / 3600);
@@ -49,19 +68,32 @@ const Leaderboard = () => {
             </header>
 
             <div className="leaderboard-controls">
+                <div className="tab-controls">
+                    <button 
+                        className={`control-btn ${view === 'streak' ? 'active' : ''}`}
+                        onClick={() => setView('streak')}
+                    >
+                        <Flame size={18} />
+                        Top Streaks
+                    </button>
+                    <button 
+                        className={`control-btn ${view === 'watchtime' ? 'active' : ''}`}
+                        onClick={() => setView('watchtime')}
+                    >
+                        <Play size={18} />
+                        Watch Time
+                    </button>
+                </div>
+
                 <button 
-                    className={`control-btn ${view === 'streak' ? 'active' : ''}`}
-                    onClick={() => setView('streak')}
+                    className={`sync-btn ${syncing ? 'syncing' : ''} ${syncSuccess ? 'success' : ''}`}
+                    onClick={handleManualSync}
+                    disabled={syncing}
                 >
-                    <Flame size={18} />
-                    Top Streaks
-                </button>
-                <button 
-                    className={`control-btn ${view === 'watchtime' ? 'active' : ''}`}
-                    onClick={() => setView('watchtime')}
-                >
-                    <Play size={18} />
-                    Watch Time
+                    {syncing ? <RefreshCcw size={18} className="spin" /> : 
+                     syncSuccess ? <CheckCircle size={18} /> : 
+                     <RefreshCcw size={18} />}
+                    {syncing ? 'Syncing...' : syncSuccess ? 'Synced!' : 'Sync My Stats'}
                 </button>
             </div>
 
@@ -72,7 +104,13 @@ const Leaderboard = () => {
                 </div>
             ) : stats.length === 0 ? (
                 <div className="leaderboard-empty">
-                    <p>No active users yet. Start watching to be the first!</p>
+                    <div className="empty-content">
+                        <Flame size={48} color="var(--c-surface2)" />
+                        <p>No active users yet. Be the first to bridge your stats!</p>
+                        <button className="empty-sync-btn" onClick={handleManualSync}>
+                            Initialize My Stats
+                        </button>
+                    </div>
                 </div>
             ) : (
                 <div className="leaderboard-content">

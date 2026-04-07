@@ -103,6 +103,10 @@ class LeaderboardViewSet(viewsets.ReadOnlyModelViewSet):
         # Order by total watch time (descending) and limit to top 50 for production performance
         return UserStat.objects.all().order_by('-total_watch_time')[:50]
 
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+
+@method_decorator(csrf_exempt, name='dispatch')
 class SyncStatsView(APIView):
     permission_classes = (permissions.AllowAny,) # We use Firebase UID for internal identifying
 

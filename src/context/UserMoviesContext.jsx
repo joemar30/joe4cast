@@ -113,12 +113,12 @@ export const UserMoviesProvider = ({ children }) => {
         return () => unsubscribe();
     }, [currentUser]);
 
-    // BACKGROUND SYNC TO DJANGO (Leaderboard & Compliance)
-    useEffect(() => {
-        if (!currentUser || loading) return;
-
-        const syncTimeout = setTimeout(() => {
-            syncUserStats({
+    // MANUAL SYNC TRIGGER
+    const syncToBackend = async () => {
+        if (!currentUser) return;
+        console.log('🔄 Syncing user stats to Django backend...');
+        try {
+            const res = await syncUserStats({
                 uid: currentUser.uid,
                 displayName: currentUser.displayName,
                 email: currentUser.email,
@@ -126,7 +126,24 @@ export const UserMoviesProvider = ({ children }) => {
                 totalWatchTime,
                 streakData
             });
-        }, 3000); // Debounce sync to avoid spamming
+            if (res) console.log('✅ Sync successful');
+            return res;
+        } catch (err) {
+            console.error('❌ Sync failed:', err);
+        }
+    };
+
+    // BACKGROUND SYNC TO DJANGO (Leaderboard & Compliance)
+    useEffect(() => {
+        if (!currentUser || loading) return;
+
+        // Perform initial sync as soon as data is ready from Firebase
+        syncToBackend();
+
+        // Also setup automatic sync that triggers on data changes
+        const syncTimeout = setTimeout(() => {
+            syncToBackend();
+        }, 10000); // 10s cooldown for background updates
 
         return () => clearTimeout(syncTimeout);
     }, [currentUser, loading, totalWatchTime, streakData]);
@@ -442,7 +459,8 @@ export const UserMoviesProvider = ({ children }) => {
         clearWatchlist,
         recordActivity,
         toggleFavorite,
-        saveOnboardingData
+        saveOnboardingData,
+        syncToBackend
     };
 
     return (

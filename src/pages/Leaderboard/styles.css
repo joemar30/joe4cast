@@ -53,9 +53,89 @@
 
 .leaderboard-controls {
   display: flex;
-  justify-content: center;
-  gap: 15px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
   margin-bottom: 60px;
+  flex-wrap: wrap;
+}
+
+.tab-controls {
+  display: flex;
+  gap: 15px;
+}
+
+.sync-btn {
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  color: #818cf8;
+  padding: 12px 24px;
+  border-radius: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.sync-btn:hover:not(:disabled) {
+  background: rgba(99, 102, 241, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+}
+
+.sync-btn.syncing {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.sync-btn.success {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+}
+
+.sync-btn .spin {
+  animation: spin 1s linear infinite;
+}
+
+.leaderboard-empty {
+  text-align: center;
+  padding: 80px 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+}
+
+.empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.empty-content p {
+  color: var(--color-text-dim);
+  font-size: 1.2rem;
+  max-width: 300px;
+  line-height: 1.5;
+}
+
+.empty-sync-btn {
+  background: #fff;
+  color: #000;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.empty-sync-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
 }
 
 .control-btn {
