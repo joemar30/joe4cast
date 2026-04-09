@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Dices, Save } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useUserMoviesContext } from '@/context/UserMoviesContext';
@@ -64,25 +65,26 @@ const EditProfileModal = ({ isOpen, onClose }) => {
         }
     };
 
-    return (
-        <div className="modal-overlay" onClick={onClose}>
+    return createPortal(
+        <div className="edit-profile-overlay" onClick={onClose}>
             <div className="edit-profile-modal" onClick={e => e.stopPropagation()}>
-                <div className="modal-header">
+                <div className="edit-profile-header">
                     <h2>Edit Profile</h2>
-                    <button className="close-btn" onClick={onClose} disabled={isSaving}>
-                        <X size={24} />
+                    <button className="close-btn" onClick={onClose} disabled={isSaving} aria-label="Close">
+                        <X size={16} />
                     </button>
                 </div>
 
-                <form onSubmit={handleSave} className="modal-content">
+                <form onSubmit={handleSave} className="edit-profile-content">
                     {/* Avatar Section */}
-                    <div className="form-section avatar-section">
-                        <label>Avatar</label>
-                        <div className="avatar-preview-container">
+                    <div className="avatar-section">
+                        <label className="section-label">Profile avatar</label>
+                        
+                        <div className="avatar-preview-display">
                             <img src={currentPreviewUrl} alt="Avatar Preview" className="avatar-preview" />
                         </div>
                         
-                        <div className="avatar-controls">
+                        <div className="avatar-controls-row">
                             <select 
                                 value={avatarStyle} 
                                 onChange={(e) => setAvatarStyle(e.target.value)}
@@ -90,44 +92,49 @@ const EditProfileModal = ({ isOpen, onClose }) => {
                             >
                                 {DICEBEAR_STYLES.map(s => (
                                     <option key={s.id} value={s.id}>{s.name}</option>
-                                ))}
+                                )) }
                             </select>
                             <button type="button" className="dice-btn" onClick={handleRandomize} title="Randomize Avatar">
-                                <Dices size={20} />
+                                <Dices size={18} />
                             </button>
                         </div>
                     </div>
 
                     {/* Username Section */}
-                    <div className="form-section">
-                        <label htmlFor="username">Display Name</label>
-                        <input 
-                            id="username"
-                            type="text" 
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            maxLength={30}
-                            placeholder="Enter your new name"
-                            required
-                        />
-                        <span className="char-count">{username.length} / 30</span>
+                    <div className="username-section">
+                        <label className="section-label" htmlFor="username">Display name</label>
+                        <div className="input-wrapper">
+                            <input 
+                                id="username"
+                                type="text" 
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                maxLength={30}
+                                placeholder="Enter your display name"
+                                required
+                            />
+                            <div className="input-footer">
+                                <span className="char-count">{username.length} / 30</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="modal-actions">
-                        <button type="button" className="cancel-btn" onClick={onClose} disabled={isSaving}>
-                            Cancel
-                        </button>
-                        <button type="submit" className="save-btn" disabled={isSaving || !username.trim()}>
+                    <div className="edit-profile-actions">
+                        <button type="submit" className="save-btn-primary" disabled={isSaving || !username.trim()}>
                             {isSaving ? (
                                 <span className="loading-spinner"></span>
                             ) : (
-                                <><Save size={18} /> Save Changes</>
+                                "Save Changes"
                             )}
+                        </button>
+                        <button type="button" className="cancel-link" onClick={onClose} disabled={isSaving}>
+                            Cancel
                         </button>
                     </div>
                 </form>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 
