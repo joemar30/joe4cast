@@ -1,7 +1,8 @@
 import { TMDB_API_KEY, TMDB_BASE_URL } from '../config/constants';
 
-// Simple in-memory cache for TMDB requests
+// Simple in-memory cache for TMDB requests with a size limit to prevent memory leaks
 const tmdbCache = new Map();
+const MAX_CACHE_SIZE = 200;
 // Track in-flight requests to prevent duplicate calls
 const pendingRequests = new Map();
 
@@ -45,7 +46,11 @@ export const fetchTMDB = async (endpoint, params = {}) => {
             }
             const data = await response.json();
 
-            // Save to cache
+            // Save to cache with size limit (FIFO)
+            if (tmdbCache.size >= MAX_CACHE_SIZE) {
+                const oldestKey = tmdbCache.keys().next().value;
+                tmdbCache.delete(oldestKey);
+            }
             tmdbCache.set(cacheKey, data);
             return data;
         } catch (error) {
