@@ -1,9 +1,9 @@
 import { useQueries } from '@tanstack/react-query';
 import { fetchTMDB } from '../api/tmdbClient';
 
-export const useTrailers = (movies) => {
+export const useTrailers = (movies, activeIndex = 0) => {
     const trailerQueries = useQueries({
-        queries: (movies || []).map((movie) => ({
+        queries: (movies || []).map((movie, index) => ({
             queryKey: ['trailer', movie.id],
             queryFn: async () => {
                 const data = await fetchTMDB(`/movie/${movie.id}/videos`);
@@ -18,7 +18,8 @@ export const useTrailers = (movies) => {
                 return (official || trailer || teaser)?.key || null;
             },
             staleTime: 1000 * 60 * 30, // 30 mins
-            enabled: !!movie.id,
+            // Only fetch for the current activeIndex and prefetch the next one
+            enabled: !!movie.id && (index === activeIndex || index === (activeIndex + 1) % movies.length),
         })),
     });
 
