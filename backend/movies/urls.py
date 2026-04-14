@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from rest_framework import permissions # <-- NEW: Needed for Swagger
 from drf_yasg.views import get_schema_view # <-- NEW: Needed for Swagger
 from drf_yasg import openapi # <-- NEW: Needed for Swagger
-from .views import RegisterView, LoginView, WatchlistViewSet, FavoriteViewSet, WatchHistoryViewSet, LeaderboardViewSet, SyncStatsView, HealthCheckView, MigrateDatabaseView
+from .views import RegisterView, LoginView, WatchlistViewSet, FavoriteViewSet, WatchHistoryViewSet, LeaderboardViewSet, SyncStatsView, HealthCheckView
 
 # --- SWAGGER SETUP STARTS HERE ---
 schema_view = get_schema_view(
