@@ -17,7 +17,7 @@ const HeroBanner = ({ movies = [] }) => {
     const [trailerReady, setTrailerReady] = useState(false);
 
     // Custom hook for fetching trailers
-    const { trailerKeys } = useTrailers(movies);
+    const { trailerKeys } = useTrailers(movies, activeIndex);
 
     /* ── Start/stop auto-advance ── */
     const startAutoAdvance = useCallback(() => {
