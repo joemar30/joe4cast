@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'whitenoise.runserver_nostatic',
+    'drf_yasg',
 
     # Local apps
     'movies',
@@ -192,6 +193,17 @@ CACHES = {
     }
 }
 
+# Swagger/OpenAPI configuration
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Token': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    }
+}
+
 # CORS and CSRF configuration
 CORS_ALLOW_ALL_ORIGINS = True 
 CSRF_TRUSTED_ORIGINS = [
@@ -214,3 +226,5 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
     CSRF_COOKIE_HTTPONLY = True # Added for extra security against XSS
     X_FRAME_OPTIONS = 'DENY'
+
+LOGIN_URL = '/api-auth/login/'

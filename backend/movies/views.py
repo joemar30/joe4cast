@@ -12,6 +12,8 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from .models import WatchlistItem, Favorite, WatchHistory, UserStat
 from .serializers import UserSerializer, WatchlistItemSerializer, FavoriteSerializer, WatchHistorySerializer, UserStatSerializer
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 class RegisterView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
@@ -30,6 +32,27 @@ class RegisterView(generics.CreateAPIView):
 
 class LoginView(APIView):
     permission_classes = (permissions.AllowAny,)
+
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['username', 'password'],
+            properties={
+                'username': openapi.Schema(type=openapi.TYPE_STRING),
+                'password': openapi.Schema(type=openapi.TYPE_STRING),
+            },
+        ),
+        responses={
+            200: "Success", # Or whatever your 200 response is
+            # --- REPLACE THE 400 LINE WITH THIS BLOCK ---
+            400: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'error': openapi.Schema(type=openapi.TYPE_STRING, description="Error message detail"),
+                }
+            )
+        }
+    )
 
     def post(self, request):
         username = request.data.get('username')
