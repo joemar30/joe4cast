@@ -15,8 +15,13 @@ import { fetchTMDB } from './tmdbClient';
 const LOCAL_GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || import.meta.env.GROQ_API;
 const LOCAL_HF_API_KEY = import.meta.env.VITE_HF_API_KEY || import.meta.env.HUGGING_FACE_API;
 
-const GROQ_MODEL = 'llama-3.3-70b-versatile';
-const HF_MODEL = 'mistralai/Mistral-7B-Instruct-v0.3';
+const GROQ_MODELS = [
+    'llama-3.3-70b-versatile',
+    'llama-3.1-8b-instant',
+    'mixtral-8x7b-32768',
+    'llama3-70b-8192'
+];
+const HF_MODEL = 'meta-llama/Llama-3.1-8B-Instruct';
 
 const TMDB_IMG_BASE = 'https://image.tmdb.org/t/p/w342';
 
@@ -134,46 +139,59 @@ const enrichWithTMDB = async (titles) => {
 
 // ── Groq Provider ─────────────────────────────────────────────
 const queryGroq = async (messages) => {
-    try {
-        // If we are running Vite locally, skip the Vercel proxy and call Groq directly
-        const isLocalDev = import.meta.env.DEV;
-        const endpoint = isLocalDev ? 'https://api.groq.com/openai/v1/chat/completions' : '/api/groq';
-        const headers = { 'Content-Type': 'application/json' };
+    // try multiple models in case of decommissioning
+    for (const model of GROQ_MODELS) {
+        try {
+            // If we are running Vite locally, skip the Vercel proxy and call Groq directly
+            const isLocalDev = import.meta.env.DEV;
+            const endpoint = isLocalDev ? 'https://api.groq.com/openai/v1/chat/completions' : '/api/groq';
+            const headers = { 'Content-Type': 'application/json' };
 
-        if (isLocalDev) {
-            if (!LOCAL_GROQ_API_KEY) {
-                console.warn('[Vibey] Local Groq API key not configured, skipping.');
+            if (isLocalDev) {
+                if (!LOCAL_GROQ_API_KEY) {
+                    console.warn('[Vibey] Local Groq API key not configured, skipping.');
+                    return null;
+                }
+                headers['Authorization'] = `Bearer ${LOCAL_GROQ_API_KEY}`;
+            }
+
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({
+                    model: model,
+                    messages: [
+                        { role: 'system', content: SYSTEM_PROMPT },
+                        ...messages,
+                    ],
+                    temperature: 0.8,
+                    max_tokens: 800,
+                }),
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                // If decommissioned or rate limit, try next model
+                if (response.status === 400 || response.status === 429) {
+                    console.warn(`[Vibey] Groq ${model} failed (${response.status}), trying next fallback...`);
+                    continue;
+                }
+                console.warn(`[Vibey] Groq failed (${response.status}):`, errText);
                 return null;
             }
-            headers['Authorization'] = `Bearer ${LOCAL_GROQ_API_KEY}`;
+
+            const data = await response.json();
+            const content = data.choices?.[0]?.message?.content;
+            if (content) {
+                console.log(`[Vibey] Successfully used Groq model: ${model}`);
+                return content;
+            }
+        } catch (err) {
+            console.warn(`[Vibey] Groq error with ${model}:`, err.message);
+            // continue loop
         }
-
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({
-                model: GROQ_MODEL,
-                messages: [
-                    { role: 'system', content: SYSTEM_PROMPT },
-                    ...messages,
-                ],
-                temperature: 0.8,
-                max_tokens: 800,
-            }),
-        });
-
-        if (!response.ok) {
-            const errText = await response.text();
-            console.warn(`[Vibey] Groq failed (${response.status}):`, errText);
-            return null;
-        }
-
-        const data = await response.json();
-        return data.choices?.[0]?.message?.content || null;
-    } catch (err) {
-        console.warn('[Vibey] Groq error:', err.message);
-        return null;
     }
+    return null;
 };
 
 // ── HuggingFace Provider ──────────────────────────────────────
@@ -181,7 +199,7 @@ const queryHuggingFace = async (messages) => {
     try {
         // If we are running Vite locally, skip the Vercel proxy and call HF directly
         const isLocalDev = import.meta.env.DEV;
-        const endpoint = isLocalDev ? `https://api-inference.huggingface.co/models/${HF_MODEL}/v1/chat/completions` : '/api/huggingface';
+        const endpoint = isLocalDev ? `https://router.huggingface.co/v1/chat/completions` : '/api/huggingface';
         const headers = { 'Content-Type': 'application/json' };
 
         if (isLocalDev) {
@@ -228,6 +246,13 @@ const queryHuggingFace = async (messages) => {
  * @returns {Promise<{text: string, movies: Array}>}
  */
 export const sendVibeyMessage = async (conversationHistory) => {
+    // 0. Simulated Latency for Debugging
+    const simLatency = localStorage.getItem('vibeo-simlatency');
+    if (simLatency === 'true') {
+        console.log('[Vibey] Simulating network latency (2s)...');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+
     // 1. Check cache first
     const cacheKey = getHistoryKey(conversationHistory);
     if (aiCache.has(cacheKey)) {
