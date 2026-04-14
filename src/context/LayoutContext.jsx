@@ -50,6 +50,21 @@ export const LayoutProvider = ({ children }) => {
         return saved !== null ? JSON.parse(saved) : false;
     });
 
+    const [devMode, setDevMode] = useState(() => {
+        const saved = localStorage.getItem('vibeo-dev-mode');
+        return saved !== null ? JSON.parse(saved) : false;
+    });
+
+    const [simulatedLatency, setSimulatedLatency] = useState(() => {
+        const saved = localStorage.getItem('vibeo-simlatency');
+        return saved !== null ? JSON.parse(saved) : false;
+    });
+
+    const [animationsEnabled, setAnimationsEnabled] = useState(() => {
+        const saved = localStorage.getItem('vibeo-animations');
+        return saved !== null ? JSON.parse(saved) : true;
+    });
+
     useEffect(() => {
         localStorage.setItem('vibeo-hero-source', heroSource);
     }, [heroSource]);
@@ -88,6 +103,18 @@ export const LayoutProvider = ({ children }) => {
         localStorage.setItem('vibeo-data-saver-mode', JSON.stringify(dataSaverMode));
     }, [dataSaverMode]);
 
+    useEffect(() => {
+        localStorage.setItem('vibeo-dev-mode', JSON.stringify(devMode));
+    }, [devMode]);
+
+    useEffect(() => {
+        localStorage.setItem('vibeo-simlatency', JSON.stringify(simulatedLatency));
+    }, [simulatedLatency]);
+
+    useEffect(() => {
+        localStorage.setItem('vibeo-animations', JSON.stringify(animationsEnabled));
+    }, [animationsEnabled]);
+
     const resetLayout = () => {
         setCardSize('medium');
         setGlassLevel('subtle');
@@ -103,6 +130,9 @@ export const LayoutProvider = ({ children }) => {
         });
         setShowVibeyChat(true);
         setDataSaverMode(false);
+        setDevMode(false);
+        setSimulatedLatency(false);
+        setAnimationsEnabled(true);
     };
 
     const value = {
@@ -124,6 +154,12 @@ export const LayoutProvider = ({ children }) => {
         setShowVibeyChat,
         dataSaverMode,
         setDataSaverMode,
+        devMode,
+        setDevMode,
+        simulatedLatency,
+        setSimulatedLatency,
+        animationsEnabled,
+        setAnimationsEnabled,
         resetLayout
     };
 
