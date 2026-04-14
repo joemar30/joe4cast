@@ -27,9 +27,20 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/fanart-api/, ''),
       },
       // Proxy local API calls to Django dev server 
-      '/api': {
+      '/api/v1': {
         target: 'http://localhost:8000',
         changeOrigin: true,
+      },
+      // Local dev proxies for AI testing (bypass CORS)
+      '/api/hf-inference': {
+        target: 'https://router.huggingface.co/v1',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/hf-inference/, ''),
+      },
+      '/api/groq-inference': {
+        target: 'https://api.groq.com/openai',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/groq-inference/, ''),
       },
     },
   },
