@@ -18,6 +18,7 @@ import Footer from '@/components/layout/Footer';
 import { useLayout } from '@/context/LayoutContext';
 import { UserMoviesProvider } from '@/context/UserMoviesContext';
 import ErrorToast from '@/components/common/ErrorToast';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
 
 /**
  * Utility to Scroll to top on route change
@@ -29,51 +30,6 @@ const ScrollToTop = () => {
   }, [pathname]);
   return null;
 };
-
-/**
- * Route wrapper to prevent unauthenticated access to sensitive pages.
- */
-const ProtectedRoute = ({ children }) => {
-  const { currentUser, loading } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (!loading && !currentUser) {
-      // Save the attempted path to redirect back after login if needed
-      // For now, just send to home
-      navigate('/', { replace: true });
-    }
-  }, [currentUser, loading, navigate]);
-
-  if (loading) return null; // Wait for auth to resolve
-  return currentUser ? children : null;
-};
-
-// Core Components (Keep synchronous for immediate load)
-
-// Lazy Loaded Pages
-const Dashboard = lazy(() => import('@/pages/Dashboard'));
-const VibeyChat = lazy(() => import('@/components/common/VibeyChat'));
-const Watch = lazy(() => import('@/pages/Watch'));
-const Play = lazy(() => import('@/pages/Play'));
-const Profile = lazy(() => import('@/pages/Profile'));
-const Discover = lazy(() => import('@/pages/Discover'));
-const Search = lazy(() => import('@/pages/Search'));
-const Onboarding = lazy(() => import('@/pages/Onboarding'));
-const AZList = lazy(() => import('@/pages/AZList'));
-const Settings = lazy(() => import('@/pages/Settings'));
-const TermsOfService = lazy(() => import('@/pages/Legal/TermsOfService'));
-const PrivacyPolicy = lazy(() => import('@/pages/Legal/PrivacyPolicy'));
-const CookiePreferences = lazy(() => import('@/pages/Legal/CookiePreferences'));
-const TasteMatcher = lazy(() => import('@/pages/TasteMatcher'));
-const SmartSearch = lazy(() => import('@/pages/SmartSearch'));
-const VibeyPage = lazy(() => import('@/pages/VibeyPage'));
-const ThemeStore = lazy(() => import('@/pages/ThemeStore'));
-const Library = lazy(() => import('@/pages/Library'));
-const DeveloperDocs = lazy(() => import('@/pages/Docs/DocsLayout'));
-const Leaderboard = lazy(() => import('@/pages/Leaderboard'));
-
 
 /**
  * Premium Loading Fallback - Cinematic & Polished
@@ -156,23 +112,49 @@ const LoadingScreen = () => (
         animation: 'loading-bar 1.5s infinite ease-in-out'
       }} />
     </div>
-
-    <style>{`
-      @keyframes float {
-        0%, 100% { transform: translateY(-20px); }
-        50% { transform: translateY(-30px); }
-      }
-      @keyframes pulse-text {
-        0%, 100% { opacity: 0.5; }
-        50% { opacity: 1; }
-      }
-      @keyframes loading-bar {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(250%); }
-      }
-    `}</style>
   </div>
 );
+
+/**
+ * Route wrapper to prevent unauthenticated access to sensitive pages.
+ */
+const ProtectedRoute = ({ children }) => {
+  const { currentUser, loading } = useAuth();
+
+  if (loading) return <LoadingScreen />;
+  
+  if (!currentUser) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
+
+// Core Components (Keep synchronous for immediate load)
+
+// Lazy Loaded Pages
+const Dashboard = lazy(() => import('@/pages/Dashboard'));
+const VibeyChat = lazy(() => import('@/components/common/VibeyChat'));
+const Watch = lazy(() => import('@/pages/Watch'));
+const Play = lazy(() => import('@/pages/Play'));
+const Profile = lazy(() => import('@/pages/Profile'));
+const Discover = lazy(() => import('@/pages/Discover'));
+const Search = lazy(() => import('@/pages/Search'));
+const Onboarding = lazy(() => import('@/pages/Onboarding'));
+const AZList = lazy(() => import('@/pages/AZList'));
+const Settings = lazy(() => import('@/pages/Settings'));
+const TermsOfService = lazy(() => import('@/pages/Legal/TermsOfService'));
+const PrivacyPolicy = lazy(() => import('@/pages/Legal/PrivacyPolicy'));
+const CookiePreferences = lazy(() => import('@/pages/Legal/CookiePreferences'));
+const TasteMatcher = lazy(() => import('@/pages/TasteMatcher'));
+const SmartSearch = lazy(() => import('@/pages/SmartSearch'));
+const VibeyPage = lazy(() => import('@/pages/VibeyPage'));
+const ThemeStore = lazy(() => import('@/pages/ThemeStore'));
+const Library = lazy(() => import('@/pages/Library'));
+const DeveloperDocs = lazy(() => import('@/pages/Docs/DocsLayout'));
+const Leaderboard = lazy(() => import('@/pages/Leaderboard'));
+
+
 
 
 const App = () => {
@@ -215,8 +197,7 @@ const App = () => {
 
     // Cleanup to ensure no leaks
     return () => {
-      // We don't necessarily want to remove it on every tiny re-render, 
-      // but just to be safe if the component unmounts for some reason.
+      html.classList.remove('no-scrollbar');
     };
   }, [location.pathname]);
 
@@ -229,7 +210,8 @@ const App = () => {
       <UserMoviesProvider>
         <ScrollToTop />
         {location.pathname !== '/onboarding' && <Header />}
-        <Suspense fallback={<LoadingScreen />}>
+        <ErrorBoundary>
+          <Suspense fallback={<LoadingScreen />}>
           <Routes>
             {/* Homepage – Discovery Dashboard */}
             <Route path="/" element={<Dashboard />} />
@@ -281,6 +263,7 @@ const App = () => {
             />
           </Routes>
         </Suspense>
+      </ErrorBoundary>
 
         {/* Avoid rendering footer on app-like views or full-screen discovery pages */}
         {!['/onboarding', '/profile', '/settings', '/vibey'].some(p => location.pathname === p) && 
