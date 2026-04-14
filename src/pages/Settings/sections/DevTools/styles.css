@@ -1,62 +1,228 @@
 .devtools-section {
-    animation: fadeIn 0.3s ease;
+    animation: fadeIn 0.4s ease;
 }
 
-.dev-card-danger {
-    border-left: 4px solid var(--c-danger, #ef4444);
-    background: linear-gradient(to right, rgba(239, 68, 68, 0.05), transparent);
+.dev-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
 }
 
-.dev-card-info {
-    border-left: 4px solid var(--c-accent-lt);
-    background: linear-gradient(to right, rgba(var(--c-accent-rgb), 0.05), transparent);
-    margin-top: 2rem;
+.dev-card {
+    background: var(--c-surface);
+    border: 1px solid var(--c-surface3);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
 }
 
-.btn-dev-action {
+.dev-card:hover {
+    border-color: var(--c-accent-lt);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+.dev-card .card-title {
+    padding: 1.25rem;
     display: flex;
     align-items: center;
+    gap: 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid var(--c-surface3);
+}
+
+.dev-card .card-title h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--c-text);
+}
+
+.dev-card .card-title svg {
+    color: var(--c-accent);
+}
+
+.dev-card .card-body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* Simulation Toggles */
+.dev-toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.toggle-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.toggle-info strong {
+    font-size: 0.9rem;
+    color: var(--c-text);
+}
+
+.toggle-info span {
+    font-size: 0.75rem;
+    color: var(--c-text2);
+}
+
+.dev-toggle-btn {
+    background: var(--c-surface2);
+    border: 1px solid var(--c-surface3);
+    color: var(--c-text2);
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.dev-toggle-btn.active {
+    background: var(--c-accent);
+    color: white;
+    border-color: var(--c-accent);
+    box-shadow: 0 0 15px var(--c-accent-glow);
+}
+
+/* Nav Pills */
+.nav-pills {
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    gap: 0.5rem !important;
+}
+
+.nav-pills button {
+    background: var(--c-bg2);
+    border: 1px solid var(--c-surface3);
+    color: var(--c-text2);
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.nav-pills button:hover {
+    background: var(--c-surface3);
+    color: var(--c-text);
+}
+
+/* Action Buttons */
+.dev-action-btn, .dev-link-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 0.5rem;
-    padding: 0.6rem 1rem;
+    padding: 0.75rem;
     border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
     border: 1px solid var(--c-surface3);
     background: var(--c-surface2);
     color: var(--c-text);
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
 }
 
-.btn-dev-action:hover {
+.dev-action-btn:hover, .dev-link-btn:hover {
     background: var(--c-surface3);
-    transform: translateY(-1px);
 }
 
-.btn-dev-action.btn-danger {
+.dev-action-btn.danger {
     color: #ef4444;
-    border-color: rgba(239, 68, 68, 0.3);
 }
 
-.btn-dev-action.btn-danger:hover {
+.dev-action-btn.danger:hover {
     background: rgba(239, 68, 68, 0.1);
     border-color: #ef4444;
 }
 
-.btn-dev-action:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
+/* Points Manager */
+.points-manager {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
-.debug-pre {
-    background: #0d0d12;
-    padding: 1rem;
-    border-radius: 8px;
+.points-manager .label {
+    font-size: 0.8rem;
+    color: var(--c-text2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.points-manager .actions {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.points-manager .actions button {
+    flex: 1;
+    padding: 0.4rem;
+    border-radius: 6px;
+    border: 1px solid var(--c-surface3);
+    background: var(--c-bg2);
+    color: var(--c-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 0.8rem;
+}
+
+.points-manager .actions button:hover {
+    border-color: var(--c-accent);
+}
+
+/* Danger Card Variation */
+.card-danger .card-title svg {
+    color: #ef4444;
+}
+
+.card-danger:hover {
+    border-color: #ef4444;
+    box-shadow: 0 10px 30px rgba(239, 68, 68, 0.1);
+}
+
+/* System Info Card */
+.debug-card {
+    margin-top: 2rem;
+    background: linear-gradient(to bottom, var(--c-surface), var(--c-bg));
+}
+
+.debug-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    padding: 1.25rem;
+}
+
+.debug-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.debug-item .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--c-text2);
+    letter-spacing: 0.5px;
+}
+
+.debug-item .value {
     font-family: 'Fira Code', monospace;
     font-size: 0.85rem;
-    color: #a1a1aa;
-    overflow-x: auto;
-    border: 1px solid var(--c-surface3);
-    margin-top: 1rem;
+    color: var(--c-accent-lt);
+    word-break: break-all;
 }
