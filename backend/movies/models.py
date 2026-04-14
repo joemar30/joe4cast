@@ -56,7 +56,7 @@ class WatchHistory(models.Model):
 class UserStat(models.Model):
     firebase_uid = models.CharField(max_length=128, unique=True)
     username = models.CharField(max_length=255, null=True, blank=True)
-    avatar_url = models.URLField(max_length=500, null=True, blank=True)
+    avatar_url = models.URLField(max_length=1000, null=True, blank=True)
     total_watch_time = models.IntegerField(default=0)
     current_streak = models.IntegerField(default=0)
     highest_streak = models.IntegerField(default=0)
