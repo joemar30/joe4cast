@@ -12,37 +12,43 @@ const ComponentShower = ({ title, description, code, children, icon: Icon = Laye
         marginBottom: '40px'
     }}>
         <div style={{ padding: '24px', borderBottom: '1px solid var(--c-surface2)', display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <div style={{ background: 'rgba(203, 166, 247, 0.1)', padding: '12px', borderRadius: '12px', color: '#cba6f7' }}>
+            <div style={{ background: 'rgba(203, 166, 247, 0.1)', padding: '12px', borderRadius: '12px', color: '#cba6f7', flexShrink: 0 }}>
                 <Icon size={24} />
             </div>
             <div>
-                <h3 style={{ margin: '0 0 8px 0', color: 'var(--c-text)' }}>{title}</h3>
-                <p style={{ margin: 0, color: 'var(--c-text2)', fontSize: '0.9rem' }}>{description}</p>
+                <h3 style={{ margin: '0 0 4px 0', color: 'var(--c-text)', fontSize: '1.2rem' }}>{title}</h3>
+                <p style={{ margin: 0, color: 'var(--c-text2)', fontSize: '0.85rem' }}>{description}</p>
             </div>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(250px, 1fr) 1.5fr', minHeight: '200px' }}>
-            {/* Live Preview Pane */}
-            <div style={{
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: 'rgba(0,0,0,0.2)',
-                padding: '32px',
-                borderRight: '1px solid var(--c-surface2)',
-                overflow: 'hidden'
-            }}>
-                <div style={{ position: 'absolute', top: 12, left: 12, display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--c-text2)', fontWeight: 600 }}>
-                    <MousePointer2 size={12} /> Live Render
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="component-shower-split" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', minHeight: '200px' }}>
+                {/* Live Preview Pane */}
+                <div style={{
+                    position: 'relative',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'rgba(0,0,0,0.2)',
+                    padding: '32px',
+                    borderRight: '1px solid var(--c-surface2)',
+                    borderBottom: '1px solid var(--c-surface2)',
+                    overflow: 'hidden',
+                    minHeight: '250px'
+                }}>
+                    <div style={{ position: 'absolute', top: 12, left: 12, display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--c-text2)', fontWeight: 600 }}>
+                        <MousePointer2 size={12} /> Live Render
+                    </div>
+                    <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                        {children}
+                    </div>
                 </div>
-                <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                    {children}
-                </div>
-            </div>
 
-            {/* Code Implementation Pane */}
-            <div style={{ padding: '0 24px', background: '#1e1e2e' }}>
-                <CodeBlock code={code} language="jsx" />
+                {/* Code Implementation Pane */}
+                <div style={{ background: '#1e1e2e', overflow: 'hidden' }}>
+                    <div style={{ padding: '0 20px', fontSize: '0.9rem' }}>
+                        <CodeBlock code={code} language="jsx" />
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -214,8 +220,8 @@ const ComponentsSection = () => {
     return (
         <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
             <div style={{ marginBottom: '40px' }}>
-                <h2 style={{ fontSize: '2.5rem', color: 'var(--c-text)', marginBottom: '16px', fontWeight: 800 }}>Design System</h2>
-                <p style={{ color: 'var(--c-text2)', fontSize: '1.1rem', maxWidth: '800px', lineHeight: '1.6' }}>
+                <h2 className="docs-heading">Design System</h2>
+                <p className="docs-subheading">
                     Vibeo utilizes a custom, scalable <strong>React Design System</strong>. Instead of writing inline styles
                     repeatedly, we built modular, reusable UI components mapped to our custom CSS design tokens.
                 </p>
