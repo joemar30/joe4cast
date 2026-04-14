@@ -11,7 +11,7 @@ export default async function handler(req, res) {
 
     try {
         const { model, messages, temperature, max_tokens } = req.body;
-        const response = await fetch(`https://api-inference.huggingface.co/models/${model}/v1/chat/completions`, {
+        const response = await fetch(`https://router.huggingface.co/v1/chat/completions`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
