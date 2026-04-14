@@ -31,6 +31,39 @@
     color: var(--c-accent);
     margin-bottom: 1rem;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.about-logo-icon:active {
+    transform: scale(0.9);
+}
+
+/* Dev Mode Unlock Toast */
+.dev-unlock-toast {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 15, 20, 0.9);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--c-accent);
+    padding: 12px 20px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--c-text);
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px var(--c-accent-glow);
+    z-index: 10000;
+    animation: toastSlideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes toastSlideUp {
+    from { transform: translate(-50%, 20px); opacity: 0; }
+    to { transform: translate(-50%, 0); opacity: 1; }
 }
 
 .vibeo-logo-img {
