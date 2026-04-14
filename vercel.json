@@ -21,6 +21,10 @@
       "dest": "backend/vercel_app.py"
     },
     {
+      "src": "/admin/(.*)",
+      "dest": "backend/vercel_app.py"
+    },
+    {
       "src": "/static/(.*)",
       "dest": "backend/static/$1"
     },
