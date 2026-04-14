@@ -33,7 +33,16 @@ const Watch = () => {
     /* ── State ── */
     const { movie: movieMeta, similar, loading, error } = useMovieDetail(id, type);
     const [isTrailerOpen, setIsTrailerOpen] = useState(false);
+    const [showTrailer, setShowTrailer] = useState(false);
     const { isWatchlisted, toggleWatchlist } = useUserMovies();
+
+    // Defer trailer iframe for performance
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowTrailer(true);
+        }, 2000);
+        return () => clearTimeout(timer);
+    }, [id]);
 
     if (error) {
         return (
@@ -76,7 +85,7 @@ const Watch = () => {
     const backdropUrl = movieMeta?.backdrop_path ? `${TMDB_BACKDROP_BASE}${movieMeta.backdrop_path}` : null;
     const posterUrl = movieMeta?.poster_path ? `${TMDB_IMAGE_BASE}${movieMeta.poster_path}` : null;
     const rating = movieMeta?.vote_average ? Number(movieMeta.vote_average).toFixed(1) : null;
-    const certification = movieMeta?.adult ? 'R' : 'PG-13';
+    const certification = movieMeta?.certification || (movieMeta?.adult ? 'R' : 'PG-13');
 
     return (
         <div className="page-wrapper">
@@ -86,7 +95,7 @@ const Watch = () => {
                 ═══════════════════════════════════════════════ */}
                 <section className="detail-hero" aria-label="Movie Details">
                     {/* Background: Auto-play Trailer or Backdrop */}
-                    {movieMeta?.trailerKey ? (
+                    {movieMeta?.trailerKey && showTrailer ? (
                         <div className="detail-hero__backdrop detail-hero__video-bg">
                             <iframe
                                 src={`https://www.youtube.com/embed/${movieMeta.trailerKey}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&loop=1&playlist=${movieMeta.trailerKey}&modestbranding=1`}
@@ -99,7 +108,7 @@ const Watch = () => {
                         </div>
                     ) : backdropUrl ? (
                         <div className="detail-hero__backdrop">
-                            <img src={backdropUrl} alt="" aria-hidden="true" />
+                            <img src={backdropUrl} alt="" />
                         </div>
                     ) : null}
                     <div className="detail-hero__overlay" />
