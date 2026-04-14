@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { fetchTMDB } from './tmdbClient';
-import { collection, query as firestoreQuery, where, getDocs, addDoc, deleteDoc, doc, orderBy } from "firebase/firestore";
+import { collection, query as firestoreQuery, where, getDocs, addDoc, deleteDoc, doc, orderBy, setDoc, serverTimestamp, writeBatch } from "firebase/firestore";
 import { db } from "../firebase";
 import { stopWords } from "../utils/stopWords";
 
@@ -304,34 +304,33 @@ export const analyzeTastePreferences = async (watchedMovies, lovedMovies) => {
 export const saveUserSearchHistory = async (userId, query) => {
     if (!userId || !query || !query.trim()) return;
 
+    const trimmedQuery = query.trim().toLowerCase();
+    const historyRef = collection(db, "users", userId, "search_history");
+
     try {
-        const historyRef = collection(db, "users", userId, "search_history");
+        // Use a deterministic ID based on the query to prevent duplicates and race conditions
+        const docId = btoa(encodeURIComponent(trimmedQuery)).replace(/\//g, '_').replace(/\+/g, '-');
+        const docRef = doc(db, "users", userId, "search_history", docId);
 
-        // Check if this exact query already exists to avoid duplicates
-        const q = firestoreQuery(historyRef, where("query", "==", query.trim().toLowerCase()));
-        const snapshot = await getDocs(q);
-
-        if (!snapshot.empty) {
-            const docId = snapshot.docs[0].id;
-            // Delete the old one and recreate below so it has the freshest timestamp
-            await deleteDoc(doc(db, "users", userId, "search_history", docId));
-        }
-
-        // Add the new search entry
-        await addDoc(historyRef, {
-            query: query.trim().toLowerCase(),
-            timestamp: new Date()
+        // setDoc with serverTimestamp will either create or update the existing doc
+        // ensuring it has the latest timestamp for 'move to top' logic.
+        await setDoc(docRef, {
+            query: trimmedQuery,
+            timestamp: serverTimestamp()
         });
 
         // --- ENFORCE MAX HISTORY LIMIT (Keep only last 10) ---
+        // This part can still have a minor race condition but is much safer/cleaner
         const limitQuery = firestoreQuery(historyRef, orderBy("timestamp", "desc"));
         const limitSnapshot = await getDocs(limitQuery);
 
         if (limitSnapshot.size > 10) {
+            const batch = writeBatch(db);
             const docsToDelete = limitSnapshot.docs.slice(10);
-            for (const docSnap of docsToDelete) {
-                await deleteDoc(doc(db, "users", userId, "search_history", docSnap.id));
-            }
+            docsToDelete.forEach(docSnap => {
+                batch.delete(docSnap.ref);
+            });
+            await batch.commit();
         }
 
     } catch (error) {
