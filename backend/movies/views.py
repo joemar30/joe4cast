@@ -43,12 +43,11 @@ class LoginView(APIView):
             },
         ),
         responses={
-            200: "Success", # Or whatever your 200 response is
-            # --- REPLACE THE 400 LINE WITH THIS BLOCK ---
+            200: openapi.Response(description="Login successful, returns auth token"),
             400: openapi.Schema(
                 type=openapi.TYPE_OBJECT,
                 properties={
-                    'error': openapi.Schema(type=openapi.TYPE_STRING, description="Error message detail"),
+                    'error': openapi.Schema(type=openapi.TYPE_STRING, description="Invalid credentials or missing fields"),
                 }
             )
         }
@@ -71,6 +70,8 @@ class WatchlistViewSet(viewsets.ModelViewSet):
     serializer_class = WatchlistItemSerializer
     
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return WatchlistItem.objects.none()
         return WatchlistItem.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
@@ -90,6 +91,8 @@ class FavoriteViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteSerializer
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Favorite.objects.none()
         return Favorite.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
@@ -105,6 +108,8 @@ class WatchHistoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = WatchHistorySerializer
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return WatchHistory.objects.none()
         return WatchHistory.objects.filter(user=self.request.user)
 
     # Allow posting to history too
