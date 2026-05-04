@@ -222,7 +222,7 @@ const ComponentsSection = () => {
             <div style={{ marginBottom: '40px' }}>
                 <h2 className="docs-heading">Design System</h2>
                 <p className="docs-subheading">
-                    Vibeo utilizes a custom, scalable <strong>React Design System</strong>. Instead of writing inline styles
+                    Joe4cast utilizes a custom, scalable <strong>React Design System</strong>. Instead of writing inline styles
                     repeatedly, we built modular, reusable UI components mapped to our custom CSS design tokens.
                 </p>
             </div>

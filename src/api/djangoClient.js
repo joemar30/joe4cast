@@ -1,5 +1,5 @@
 /**
- * Django API Client for Vibeo
+ * Django API Client for Joe4cast
  * Handles connection to the local Django backend for leaderboard and compliance features.
  */
 

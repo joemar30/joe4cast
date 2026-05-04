@@ -26,7 +26,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
     const defaultStyle = isDicebear ? currentUser.photoURL.split('/')[4] : 'lorelei';
     
     // Defensive parsing for the seed
-    let defaultSeed = currentUser?.uid || 'VibeoUser';
+    let defaultSeed = currentUser?.uid || 'Joe4castUser';
     if (isDicebear) {
         try {
             const url = new URL(currentUser.photoURL);

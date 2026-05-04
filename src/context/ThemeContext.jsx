@@ -10,36 +10,36 @@ const ThemeContext = createContext();
 export const ThemeProvider = ({ children }) => {
     // Default to 'default' or read from localStorage
     const [theme, setTheme] = useState(() => {
-        return localStorage.getItem('vibeo-theme') || 'default';
+        return localStorage.getItem('joe4cast-theme') || 'default';
     });
 
     // Default to 'none' or read from localStorage
     const [backgroundPattern, setBackgroundPattern] = useState(() => {
-        return localStorage.getItem('vibeo-pattern') || 'none';
+        return localStorage.getItem('joe4cast-pattern') || 'none';
     });
 
     useEffect(() => {
         // Persist theme
-        localStorage.setItem('vibeo-theme', theme);
+        localStorage.setItem('joe4cast-theme', theme);
         // Apply to html for root-level CSS selectors (scrollbar, etc)
         document.documentElement.setAttribute('data-theme', theme);
     }, [theme]);
 
     useEffect(() => {
         // Persist pattern
-        localStorage.setItem('vibeo-pattern', backgroundPattern);
+        localStorage.setItem('joe4cast-pattern', backgroundPattern);
         // Apply to html for root-level CSS selectors
         document.documentElement.setAttribute('data-pattern', backgroundPattern);
     }, [backgroundPattern]);
 
     // Favorites persistent in localStorage
     const [favorites, setFavorites] = useState(() => {
-        const saved = localStorage.getItem('vibeo-theme-favorites');
+        const saved = localStorage.getItem('joe4cast-theme-favorites');
         return saved ? JSON.parse(saved) : ['default', 'oled']; // Default favorites
     });
 
     useEffect(() => {
-        localStorage.setItem('vibeo-theme-favorites', JSON.stringify(favorites));
+        localStorage.setItem('joe4cast-theme-favorites', JSON.stringify(favorites));
     }, [favorites]);
 
     const toggleFavorite = (id) => {

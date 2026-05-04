@@ -1,10 +1,10 @@
-# Vibeo: AI Movie Mood-Matching & Streaming
+# Joe4cast: AI Movie Mood-Matching & Streaming
 
-**Vibeo** is a next-generation personal movie streaming and AI-powered mood-matching recommendation platform. Designed with a premium aesthetic and powered by advanced content-based filtering along with Google's Gemini AI, Vibeo intuitively helps you discover what to watch based precisely on your current mood. 
+**Joe4cast** is a next-generation personal movie streaming and AI-powered mood-matching recommendation platform. Designed with a premium aesthetic and powered by advanced content-based filtering along with Google's Gemini AI, Joe4cast intuitively helps you discover what to watch based precisely on your current mood. 
 
 ## ✨ Features
 
-- **🎭 AI Mood-Matching**: Describe how you're feeling, and Vibeo's integrated Gemini AI will recommend the perfect movies for your current vibe.
+- **🎭 AI Mood-Matching**: Describe how you're feeling, and Joe4cast's integrated Gemini AI will recommend the perfect movies for your current vibe.
 - **🎬 Extensive Discovery Dashboard**: Browse curated selections, trending movies, and personalized recommendations powered by the TMDB API.
 - **▶️ Seamless Streaming**: Built-in player for an uninterrupted viewing experience.
 - **🔐 Secure Authentication**: Fast and secure Google Sign-In and email authentication powered by Firebase.
@@ -24,7 +24,7 @@
 ## 📁 Project Structure
 
 ```text
-📦 Vibeo
+📦 Joe4cast
  ┣ 📂 public/          # Static assets (Favicons, etc.)
  ┣ 📂 src/             # Application source code
  ┃ ┣ 📂 api/           # External API clients (TMDB, Gemini)
@@ -39,7 +39,7 @@
  ┃ ┣ 📂 utils/         # Helper functions and utilities
  ┃ ┣ 📜 App.jsx        # Main routing component
  ┃ ┣ 📜 firebase.js    # Firebase initialization
- ┃ ┗ 📜 main.jsx       # React application entry point
+ ┃ ┣ 📜 main.jsx       # React application entry point
  ┣ 📜 eslint.config.js # ESLint configuration
  ┣ 📜 index.html       # HTML entry point (SEO optimized)
  ┣ 📜 package.json     # Dependencies & scripts
@@ -61,8 +61,8 @@ Follow these steps to set up the project locally on your machine.
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/vibeo.git
-   cd vibeo
+   git clone https://github.com/your-username/joe4cast.git
+   cd joe4cast
    ```
 
 2. **Install dependencies:**
@@ -116,6 +116,13 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+*Powered by React, AI, and a passion for great cinema.*
+eature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 

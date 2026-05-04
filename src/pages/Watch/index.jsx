@@ -91,6 +91,44 @@ const Watch = () => {
     const today = new Date().toISOString().split('T')[0];
     const isUnreleased = releaseDate && releaseDate > today;
 
+    const handleDownload = async () => {
+        // Try to automatically download the torrent file via YTS API for movies
+        if (type === 'movie') {
+            try {
+                // Use IMDb ID for an exact match if we have it, otherwise just use the raw title (don't append year as it breaks YTS search)
+                const searchTerm = movieMeta?.imdb_id ? movieMeta.imdb_id : displayTitle;
+                
+                const res = await fetch(`https://yts.mx/api/v2/list_movies.json?query_term=${encodeURIComponent(searchTerm)}`);
+                const data = await res.json();
+                
+                if (data?.data?.movies?.length > 0) {
+                    // Get highest quality torrent of the best match
+                    const resultMovie = data.data.movies[0]; 
+                    const torrent = resultMovie.torrents.find(t => t.quality === '1080p' || t.quality === '720p') || resultMovie.torrents[0];
+                    
+                    if (torrent && torrent.url) {
+                        // Create an invisible link and click it to trigger automatic download
+                        const link = document.createElement('a');
+                        link.href = torrent.url;
+                        link.download = '';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        return; // Successfully downloaded
+                    }
+                }
+                
+                // If we get here, YTS didn't have it
+                alert("Direct download file not found. Redirecting to manual search...");
+            } catch (e) {
+                console.error("Download API error:", e);
+            }
+        }
+        
+        // Fallback: Open 1337x search for TV Shows or if the movie wasn't found on YTS
+        window.open(`https://1337x.to/search/${encodeURIComponent(displayTitle)}/1/`, '_blank');
+    };
+
     return (
         <div className="page-wrapper">
             <main>
@@ -215,6 +253,20 @@ const Watch = () => {
                                             Trailer
                                         </button>
                                     )}
+
+                                    <button
+                                        className="detail-watchlist-btn"
+                                        onClick={handleDownload}
+                                        style={{ color: '#e2e8f0', background: 'rgba(255, 255, 255, 0.1)', border: '1px solid rgba(255,255,255,0.2)' }}
+                                        title="Download Movie"
+                                    >
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="7 10 12 15 17 10"></polyline>
+                                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                                        </svg>
+                                        Download
+                                    </button>
                                     <WatchlistDropdown movie={movieMeta} />
                                 </div>
                             </div>

@@ -171,15 +171,10 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    // Basic route protection for onboarding flow
-    if (currentUser && isOnboarded !== null) {
-      const isNavigatingToOnboarding = location.pathname === '/onboarding';
-
-      if (isOnboarded === false && !isNavigatingToOnboarding) {
-        navigate('/onboarding', { replace: true });
-      } else if (isOnboarded === true && isNavigatingToOnboarding) {
-        navigate('/', { replace: true });
-      }
+    // Onboarding is optional — users always land on the main dashboard.
+    // If they are already onboarded and somehow navigate to /onboarding, redirect them home.
+    if (currentUser && isOnboarded === true && location.pathname === '/onboarding') {
+      navigate('/', { replace: true });
     }
   }, [currentUser, isOnboarded, location.pathname, navigate]);
 
@@ -256,7 +251,7 @@ const App = () => {
                 >
                   <h1 style={{ fontSize: '1.5rem', color: '#f1f0f5' }}>404 – Page Not Found</h1>
                   <a href="/" style={{ color: '#a855f7', fontWeight: 600 }}>
-                    ← Back to Vibeo
+                    ← Back to Joe4cast
                   </a>
                 </div>
               }

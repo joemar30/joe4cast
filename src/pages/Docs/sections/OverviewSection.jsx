@@ -69,7 +69,7 @@ const OverviewSection = () => {
             </div>
 
             <p className="docs-subheading">
-                Vibeo is a modern media discovery platform designed with premium UI patterns.
+                Joe4cast is a modern media discovery platform designed with premium UI patterns.
                 This documentation hub proves the correct implementation of the required system architecture.
             </p>
 
@@ -107,7 +107,7 @@ const OverviewSection = () => {
             }}>Modern Technical Equivalency</h3>
 
             <p style={{ color: 'var(--c-text2)', marginBottom: '32px', lineHeight: '1.6' }}>
-                Instead of older legacy architectures (like localhost Django with SQL), Vibeo uses a modern
+                Instead of older legacy architectures (like localhost Django with SQL), Joe4cast uses a modern
                 <strong> Serverless Edge Architecture</strong>. Below is the mapping of the project requirements to our implementation:
             </p>
 

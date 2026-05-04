@@ -13,14 +13,14 @@ const CookiePreferences = () => {
                 <section>
                     <h2>What Are Cookies?</h2>
                     <p>Cookies are small text files that are placed on your device (computer, tablet, or mobile phone) when you visit a website. They are widely used to make websites work more efficiently, provide a better user experience, and supply information to the website operators.</p>
-                    <p>Vibeo ("Service", "Platform", "we", "us") uses cookies and similar technologies (such as local storage and session storage) to operate essential site functionality, remember your preferences, and understand how you interact with the Platform.</p>
+                    <p>Joe4cast ("Service", "Platform", "we", "us") uses cookies and similar technologies (such as local storage and session storage) to operate essential site functionality, remember your preferences, and understand how you interact with the Platform.</p>
                     <p>This Cookie Policy explains what cookies we use, why we use them, and how you can control your preferences. By continuing to use the Service, you consent to the use of cookies as described in this policy and based on your selections below.</p>
                 </section>
 
                 {/* ── Types of Cookies ── */}
                 <section>
                     <h2>Types of Cookies We Use</h2>
-                    <p>The cookies used on the Vibeo Platform can be categorized as follows:</p>
+                    <p>The cookies used on the Joe4cast Platform can be categorized as follows:</p>
 
                     <h3>Strictly Necessary (Essential) Cookies</h3>
                     <p>These cookies are required for the Platform to function correctly. Without them, you would not be able to sign in, maintain your session, or use core features. These cookies cannot be disabled.</p>
@@ -48,7 +48,7 @@ const CookiePreferences = () => {
                     </ul>
 
                     <h3>Marketing and Advertising Cookies</h3>
-                    <p>These cookies may be used in the future to deliver relevant advertisements or content recommendations. Currently, Vibeo does not serve third-party advertisements. If this changes, this section will be updated accordingly.</p>
+                    <p>These cookies may be used in the future to deliver relevant advertisements or content recommendations. Currently, Joe4cast does not serve third-party advertisements. If this changes, this section will be updated accordingly.</p>
                 </section>
 
                 {/* ── Third-Party Cookies ── */}
@@ -65,7 +65,7 @@ const CookiePreferences = () => {
                 {/* ── Local Storage ── */}
                 <section>
                     <h2>Local Storage and Session Storage</h2>
-                    <p>In addition to cookies, Vibeo uses browser local storage and session storage to store certain data on your device. These technologies function similarly to cookies but can store larger amounts of data and are not transmitted to our servers with every request.</p>
+                    <p>In addition to cookies, Joe4cast uses browser local storage and session storage to store certain data on your device. These technologies function similarly to cookies but can store larger amounts of data and are not transmitted to our servers with every request.</p>
                     <p><strong>Data stored in local storage includes:</strong></p>
                     <ul>
                         <li>Theme and appearance preferences</li>
@@ -83,7 +83,7 @@ const CookiePreferences = () => {
                 {/* ── Toggle Controls ── */}
                 <section>
                     <h2>Summary of Cookies Used</h2>
-                    <p>Below is a summary of the cookie categories currently active on Vibeo and their status:</p>
+                    <p>Below is a summary of the cookie categories currently active on Joe4cast and their status:</p>
 
                     <div className="cookie-settings">
                         <div className="cookie-option">
@@ -107,7 +107,7 @@ const CookiePreferences = () => {
                                 <h3>Analytics Cookies</h3>
                                 <span className="cookie-status inactive">Not Used</span>
                             </div>
-                            <p>Vibeo does not currently use any analytics or tracking cookies. If this changes in the future, this page will be updated and your consent will be requested.</p>
+                            <p>Joe4cast does not currently use any analytics or tracking cookies. If this changes in the future, this page will be updated and your consent will be requested.</p>
                         </div>
 
                         <div className="cookie-option">
@@ -115,7 +115,7 @@ const CookiePreferences = () => {
                                 <h3>Marketing Cookies</h3>
                                 <span className="cookie-status inactive">Not Used</span>
                             </div>
-                            <p>Vibeo does not serve third-party advertisements and does not use any marketing or advertising cookies.</p>
+                            <p>Joe4cast does not serve third-party advertisements and does not use any marketing or advertising cookies.</p>
                         </div>
                     </div>
                 </section>
@@ -154,7 +154,7 @@ const CookiePreferences = () => {
                 {/* ── Contact ── */}
                 <section>
                     <h2>Contact Us</h2>
-                    <p>If you have any questions about our use of cookies or this Cookie Policy, please contact the Vibeo development team through our official GitHub repository at <a href="https://github.com/ADET-AI-Assistant/Vibeo" target="_blank" rel="noopener noreferrer">github.com/ADET-AI-Assistant/Vibeo</a>.</p>
+                    <p>If you have any questions about our use of cookies or this Cookie Policy, please contact the Joe4cast development team through our official GitHub repository at <a href="https://github.com/ADET-AI-Assistant/Joe4cast" target="_blank" rel="noopener noreferrer">github.com/ADET-AI-Assistant/Joe4cast</a>.</p>
                 </section>
             </main>
         </div>

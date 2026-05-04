@@ -2,15 +2,15 @@
 
 ## Supported Versions
 
-Vibeo is currently in active development and has not yet published any official releases. Security updates and patches are applied directly to the `main` branch. 
+Joe4cast is currently in active development and has not yet published any official releases. Security updates and patches are applied directly to the `main` branch. 
 
 | Version | Supported          |
 | ------- | ------------------ |
 | main    | Yes                |
 
-## Reporting a Vulnerability
+## Reporting a Vulnerabilitypro
 
-If you discover a security vulnerability within Vibeo, please do not disclose it publicly via public issue trackers or forums. 
+If you discover a security vulnerability within Joe4cast, please do not disclose it publicly via public issue trackers or forums. 
 
 Instead, please report it privately. You can submit a report by opening a draft security advisory on GitHub or by contacting the maintainers directly. 
 
@@ -23,7 +23,7 @@ Reports will be acknowledged within 48 hours, and a timeline for a fix will be p
 
 ## API Key & Credential Management
 
-Vibeo relies on several third-party services:
+Joe4cast relies on several third-party services:
 * Google Gemini API
 * TMDB API
 * Firebase

@@ -2,7 +2,7 @@
  * vibeyAI.js
  * ═══════════════════════════════════════════════════════════════
  * AI client for the Vibey chatbot.
- * Waterfall: Groq (Llama 3) → HuggingFace (Mistral) → error
+ * Waterfall: Gemini (primary) → Groq (Llama 3) → HuggingFace → error
  *
  * Accepts a full conversation history array for contextual memory.
  * Returns { text, movies[] } where movies are TMDB-enriched.
@@ -10,8 +10,10 @@
  */
 
 import { fetchTMDB } from './tmdbClient';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Fetch keys directly when running local Vite dev server
+// API Keys
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const LOCAL_GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || import.meta.env.GROQ_API;
 const LOCAL_HF_API_KEY = import.meta.env.VITE_HF_API_KEY || import.meta.env.HUGGING_FACE_API;
 
@@ -22,6 +24,7 @@ const GROQ_MODELS = [
     'llama3-70b-8192'
 ];
 const HF_MODEL = 'meta-llama/Llama-3.1-8B-Instruct';
+const GEMINI_MODEL = import.meta.env.VITE_GEMINI_MODEL || 'gemini-1.5-flash';
 
 const TMDB_IMG_BASE = 'https://image.tmdb.org/t/p/w342';
 
@@ -34,14 +37,13 @@ const MAX_AI_CACHE_SIZE = 50;
  */
 const getHistoryKey = (history) => {
     if (!history || history.length === 0) return 'empty';
-    // Use the entire history for a robust cache key to avoid collisions
     return JSON.stringify(history.map(m => ({ role: m.role, content: m.content })));
 };
 
 /**
  * System prompt that defines Vibey's personality and output format.
  */
-const SYSTEM_PROMPT = `You are Vibey, the friendly AI movie & TV recommendation assistant for Vibeo.
+const SYSTEM_PROMPT = `You are Vibey, the friendly AI movie & TV recommendation assistant for Joe4cast.
 
 PERSONALITY:
 - You're enthusiastic, witty, and casual — like chatting with a movie-nerd friend.
@@ -73,9 +75,7 @@ const parseVibeyResponse = (rawText) => {
     let movieTitles = [];
 
     if (match) {
-        // Remove the movie block from the displayed text
         text = rawText.replace(movieBlockRegex, '').trim();
-
         try {
             const cleaned = match[1].trim();
             const parsed = JSON.parse(cleaned);
@@ -92,30 +92,22 @@ const parseVibeyResponse = (rawText) => {
 
 /**
  * Enrich movie titles via TMDB search.
- * Returns array of { id, title, poster_path, vote_average, release_date, overview, media_type }
  */
 const enrichWithTMDB = async (titles) => {
     const results = [];
-
-    // Process in parallel but cap at 6 to keep it snappy
     const toSearch = titles.slice(0, 6);
 
     const searches = toSearch.map(async (title) => {
         try {
             const data = await fetchTMDB('/search/multi', { query: title });
             if (data?.results?.length > 0) {
-                // Pick the best match (first result with a poster)
                 const best = data.results.find(r => r.poster_path) || data.results[0];
-
-                // Fetch extra details for trailers
                 const details = await fetchTMDB(`/${best.media_type || 'movie'}/${best.id}`, {
                     append_to_response: 'videos'
                 });
-
                 const trailer = details?.videos?.results?.find(
                     v => (v.type === 'Trailer' || v.type === 'Teaser') && v.site === 'YouTube'
                 );
-
                 return {
                     id: best.id,
                     title: best.title || best.name,
@@ -136,25 +128,53 @@ const enrichWithTMDB = async (titles) => {
 
     const resolved = await Promise.all(searches);
     resolved.forEach(r => { if (r) results.push(r); });
-
     return results;
 };
 
-// ── Groq Provider ─────────────────────────────────────────────
+// ── Gemini Provider (Primary) ─────────────────────────────────
+const queryGemini = async (messages) => {
+    if (!GEMINI_API_KEY) {
+        console.warn('[Vibey] Gemini API key not configured.');
+        return null;
+    }
+    try {
+        const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+        const model = genAI.getGenerativeModel({
+            model: GEMINI_MODEL,
+            systemInstruction: SYSTEM_PROMPT,
+        });
+
+        // Convert history to Gemini format (uses "user" and "model" roles)
+        const history = messages.slice(0, -1).map(m => ({
+            role: m.role === 'assistant' ? 'model' : 'user',
+            parts: [{ text: m.content }]
+        }));
+
+        const lastMessage = messages[messages.length - 1];
+
+        const chat = model.startChat({ history });
+        const result = await chat.sendMessage(lastMessage.content);
+        const text = result.response.text();
+        if (text) {
+            console.log('[Vibey] Successfully used Gemini.');
+            return text;
+        }
+    } catch (err) {
+        console.warn('[Vibey] Gemini error:', err.message);
+    }
+    return null;
+};
+
+// ── Groq Provider (Fallback 1) ────────────────────────────────
 const queryGroq = async (messages) => {
-    // try multiple models in case of decommissioning
     for (const model of GROQ_MODELS) {
         try {
-            // If we are running Vite locally, skip the Vercel proxy and call Groq directly
             const isLocalDev = import.meta.env.DEV;
             const endpoint = isLocalDev ? 'https://api.groq.com/openai/v1/chat/completions' : '/api/groq';
             const headers = { 'Content-Type': 'application/json' };
 
             if (isLocalDev) {
-                if (!LOCAL_GROQ_API_KEY) {
-                    console.warn('[Vibey] Local Groq API key not configured, skipping.');
-                    return null;
-                }
+                if (!LOCAL_GROQ_API_KEY) return null;
                 headers['Authorization'] = `Bearer ${LOCAL_GROQ_API_KEY}`;
             }
 
@@ -162,7 +182,7 @@ const queryGroq = async (messages) => {
                 method: 'POST',
                 headers,
                 body: JSON.stringify({
-                    model: model,
+                    model,
                     messages: [
                         { role: 'system', content: SYSTEM_PROMPT },
                         ...messages,
@@ -173,43 +193,29 @@ const queryGroq = async (messages) => {
             });
 
             if (!response.ok) {
-                const errText = await response.text();
-                // If decommissioned or rate limit, try next model
-                if (response.status === 400 || response.status === 429) {
-                    console.warn(`[Vibey] Groq ${model} failed (${response.status}), trying next fallback...`);
-                    continue;
-                }
-                console.warn(`[Vibey] Groq failed (${response.status}):`, errText);
+                if (response.status === 400 || response.status === 429) continue;
                 return null;
             }
 
             const data = await response.json();
             const content = data.choices?.[0]?.message?.content;
-            if (content) {
-                console.log(`[Vibey] Successfully used Groq model: ${model}`);
-                return content;
-            }
+            if (content) return content;
         } catch (err) {
             console.warn(`[Vibey] Groq error with ${model}:`, err.message);
-            // continue loop
         }
     }
     return null;
 };
 
-// ── HuggingFace Provider ──────────────────────────────────────
+// ── HuggingFace Provider (Fallback 2) ─────────────────────────
 const queryHuggingFace = async (messages) => {
     try {
-        // If we are running Vite locally, skip the Vercel proxy and call HF directly
         const isLocalDev = import.meta.env.DEV;
         const endpoint = isLocalDev ? `https://router.huggingface.co/v1/chat/completions` : '/api/huggingface';
         const headers = { 'Content-Type': 'application/json' };
 
         if (isLocalDev) {
-            if (!LOCAL_HF_API_KEY) {
-                console.warn('[Vibey] Local HuggingFace API key not configured, skipping.');
-                return null;
-            }
+            if (!LOCAL_HF_API_KEY) return null;
             headers['Authorization'] = `Bearer ${LOCAL_HF_API_KEY}`;
         }
 
@@ -227,12 +233,7 @@ const queryHuggingFace = async (messages) => {
             }),
         });
 
-        if (!response.ok) {
-            const errText = await response.text();
-            console.warn(`[Vibey] HuggingFace failed (${response.status}):`, errText);
-            return null;
-        }
-
+        if (!response.ok) return null;
         const data = await response.json();
         return data.choices?.[0]?.message?.content || null;
     } catch (err) {
@@ -250,7 +251,7 @@ const queryHuggingFace = async (messages) => {
  */
 export const sendVibeyMessage = async (conversationHistory) => {
     // 0. Simulated Latency for Debugging
-    const simLatency = localStorage.getItem('vibeo-simlatency');
+    const simLatency = localStorage.getItem('joe4cast-simlatency');
     if (simLatency === 'true') {
         console.log('[Vibey] Simulating network latency (2s)...');
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -263,17 +264,23 @@ export const sendVibeyMessage = async (conversationHistory) => {
         return aiCache.get(cacheKey);
     }
 
-    // 2. Try Groq
-    let rawResponse = await queryGroq(conversationHistory);
-    let provider = 'groq';
+    // 2. Try Gemini first (key already configured)
+    let rawResponse = await queryGemini(conversationHistory);
+    let provider = 'gemini';
 
-    // 3. Fallback to HuggingFace
+    // 3. Fallback to Groq
+    if (!rawResponse) {
+        rawResponse = await queryGroq(conversationHistory);
+        provider = 'groq';
+    }
+
+    // 4. Fallback to HuggingFace
     if (!rawResponse) {
         rawResponse = await queryHuggingFace(conversationHistory);
         provider = 'huggingface';
     }
 
-    // 4. Both failed
+    // 5. All providers failed
     if (!rawResponse) {
         return {
             text: "Hmm, I'm having trouble connecting right now. Try again in a moment! 🔌",
@@ -284,10 +291,10 @@ export const sendVibeyMessage = async (conversationHistory) => {
 
     console.log(`[Vibey] Response from ${provider}`);
 
-    // 5. Parse the response
+    // 6. Parse the response
     const { text, movieTitles } = parseVibeyResponse(rawResponse);
 
-    // 6. Enrich with TMDB data if there are movie recommendations
+    // 7. Enrich with TMDB data if there are movie recommendations
     let movies = [];
     if (movieTitles.length > 0) {
         movies = await enrichWithTMDB(movieTitles);
@@ -295,7 +302,7 @@ export const sendVibeyMessage = async (conversationHistory) => {
 
     const result = { text, movies, provider, rawResponse };
 
-    // 7. Save to cache with size limit (FIFO)
+    // 8. Save to cache with size limit (FIFO)
     if (aiCache.size >= MAX_AI_CACHE_SIZE) {
         const oldestKey = aiCache.keys().next().value;
         aiCache.delete(oldestKey);
@@ -310,7 +317,7 @@ export const sendVibeyMessage = async (conversationHistory) => {
  */
 export const hasVibeyProvider = () => {
     if (import.meta.env.DEV) {
-        return !!(LOCAL_GROQ_API_KEY || LOCAL_HF_API_KEY);
+        return !!(GEMINI_API_KEY || LOCAL_GROQ_API_KEY || LOCAL_HF_API_KEY);
     }
     return true; // Proxy via Vercel removes need for client-side keys check
 };

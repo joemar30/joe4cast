@@ -5,15 +5,15 @@ const LayoutContext = createContext();
 export const LayoutProvider = ({ children }) => {
     // Default layout settings
     const [cardSize, setCardSize] = useState(() => {
-        return localStorage.getItem('vibeo-card-size') || 'medium';
+        return localStorage.getItem('joe4cast-card-size') || 'medium';
     });
 
     const [glassLevel, setGlassLevel] = useState(() => {
-        return localStorage.getItem('vibeo-glass-level') || 'subtle';
+        return localStorage.getItem('joe4cast-glass-level') || 'subtle';
     });
 
     const [showMetadata, setShowMetadata] = useState(() => {
-        const saved = localStorage.getItem('vibeo-show-metadata');
+        const saved = localStorage.getItem('joe4cast-show-metadata');
         return saved ? JSON.parse(saved) : {
             rating: true,
             year: true,
@@ -23,96 +23,96 @@ export const LayoutProvider = ({ children }) => {
     });
 
     const [heroSource, setHeroSource] = useState(() => {
-        return localStorage.getItem('vibeo-hero-source') || 'trending';
+        return localStorage.getItem('joe4cast-hero-source') || 'trending';
     });
 
     const [heroAutoNext, setHeroAutoNext] = useState(() => {
-        const saved = localStorage.getItem('vibeo-hero-autonext');
+        const saved = localStorage.getItem('joe4cast-hero-autonext');
         return saved !== null ? JSON.parse(saved) : true;
     });
 
     const [heroInterval, setHeroInterval] = useState(() => {
-        const saved = localStorage.getItem('vibeo-hero-interval');
+        const saved = localStorage.getItem('joe4cast-hero-interval');
         return saved ? Number(saved) : 8000;
     });
 
     const [heroVideoQuality, setHeroVideoQuality] = useState(() => {
-        return localStorage.getItem('vibeo-hero-quality') || 'hd1080';
+        return localStorage.getItem('joe4cast-hero-quality') || 'hd1080';
     });
 
     const [showVibeyChat, setShowVibeyChat] = useState(() => {
-        const saved = localStorage.getItem('vibeo-show-vibey-chat');
+        const saved = localStorage.getItem('joe4cast-show-vibey-chat');
         return saved !== null ? JSON.parse(saved) : true;
     });
 
     const [dataSaverMode, setDataSaverMode] = useState(() => {
-        const saved = localStorage.getItem('vibeo-data-saver-mode');
+        const saved = localStorage.getItem('joe4cast-data-saver-mode');
         return saved !== null ? JSON.parse(saved) : false;
     });
 
     const [devMode, setDevMode] = useState(() => {
-        const saved = localStorage.getItem('vibeo-dev-mode');
+        const saved = localStorage.getItem('joe4cast-dev-mode');
         return saved !== null ? JSON.parse(saved) : false;
     });
 
     const [simulatedLatency, setSimulatedLatency] = useState(() => {
-        const saved = localStorage.getItem('vibeo-simlatency');
+        const saved = localStorage.getItem('joe4cast-simlatency');
         return saved !== null ? JSON.parse(saved) : false;
     });
 
     const [animationsEnabled, setAnimationsEnabled] = useState(() => {
-        const saved = localStorage.getItem('vibeo-animations');
+        const saved = localStorage.getItem('joe4cast-animations');
         return saved !== null ? JSON.parse(saved) : true;
     });
 
     useEffect(() => {
-        localStorage.setItem('vibeo-hero-source', heroSource);
+        localStorage.setItem('joe4cast-hero-source', heroSource);
     }, [heroSource]);
 
     useEffect(() => {
-        localStorage.setItem('vibeo-hero-autonext', JSON.stringify(heroAutoNext));
+        localStorage.setItem('joe4cast-hero-autonext', JSON.stringify(heroAutoNext));
     }, [heroAutoNext]);
 
     useEffect(() => {
-        localStorage.setItem('vibeo-hero-interval', heroInterval.toString());
+        localStorage.setItem('joe4cast-hero-interval', heroInterval.toString());
     }, [heroInterval]);
 
     useEffect(() => {
-        localStorage.setItem('vibeo-hero-quality', heroVideoQuality);
+        localStorage.setItem('joe4cast-hero-quality', heroVideoQuality);
     }, [heroVideoQuality]);
 
     useEffect(() => {
-        localStorage.setItem('vibeo-card-size', cardSize);
+        localStorage.setItem('joe4cast-card-size', cardSize);
         document.body.setAttribute('data-card-size', cardSize);
     }, [cardSize]);
 
     useEffect(() => {
-        localStorage.setItem('vibeo-glass-level', glassLevel);
+        localStorage.setItem('joe4cast-glass-level', glassLevel);
         document.body.setAttribute('data-glass-level', glassLevel);
     }, [glassLevel]);
 
     useEffect(() => {
-        localStorage.setItem('vibeo-show-metadata', JSON.stringify(showMetadata));
+        localStorage.setItem('joe4cast-show-metadata', JSON.stringify(showMetadata));
     }, [showMetadata]);
 
     useEffect(() => {
-        localStorage.setItem('vibeo-show-vibey-chat', JSON.stringify(showVibeyChat));
+        localStorage.setItem('joe4cast-show-vibey-chat', JSON.stringify(showVibeyChat));
     }, [showVibeyChat]);
 
     useEffect(() => {
-        localStorage.setItem('vibeo-data-saver-mode', JSON.stringify(dataSaverMode));
+        localStorage.setItem('joe4cast-data-saver-mode', JSON.stringify(dataSaverMode));
     }, [dataSaverMode]);
 
     useEffect(() => {
-        localStorage.setItem('vibeo-dev-mode', JSON.stringify(devMode));
+        localStorage.setItem('joe4cast-dev-mode', JSON.stringify(devMode));
     }, [devMode]);
 
     useEffect(() => {
-        localStorage.setItem('vibeo-simlatency', JSON.stringify(simulatedLatency));
+        localStorage.setItem('joe4cast-simlatency', JSON.stringify(simulatedLatency));
     }, [simulatedLatency]);
 
     useEffect(() => {
-        localStorage.setItem('vibeo-animations', JSON.stringify(animationsEnabled));
+        localStorage.setItem('joe4cast-animations', JSON.stringify(animationsEnabled));
     }, [animationsEnabled]);
 
     const resetLayout = () => {

@@ -15,6 +15,8 @@ export default defineConfig({
     },
   },
   server: {
+    port: 5173,
+    strictPort: true, // Fail instead of using a different port
     headers: {
       'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
       'Cross-Origin-Embedder-Policy': 'unsafe-none',

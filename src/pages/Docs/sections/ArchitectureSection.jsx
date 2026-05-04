@@ -106,7 +106,7 @@ const ArchitectureSection = () => {
                 
                 <div className="flow-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
                     <div className="flow-node">
-                        <FlowNode icon={Layout} title="Vibeo Client" desc="React frontend sending POST request" color="137, 180, 250" delay={0.1} />
+                        <FlowNode icon={Layout} title="Joe4cast Client" desc="React frontend sending POST request" color="137, 180, 250" delay={0.1} />
                     </div>
                     <div className="flow-path">
                         <FlowPath color="137, 180, 250" active={true} delay={0.3} />
@@ -142,7 +142,7 @@ const ArchitectureSection = () => {
                 
                 <div className="flow-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
                     <div className="flow-node">
-                        <FlowNode icon={Layout} title="Vibeo Client" desc="User signs in via Google" color="137, 180, 250" delay={0.1} />
+                        <FlowNode icon={Layout} title="Joe4cast Client" desc="User signs in via Google" color="137, 180, 250" delay={0.1} />
                     </div>
                     <div className="flow-path">
                         <FlowPath color="166, 227, 161" active={true} delay={0.3} />
@@ -257,7 +257,7 @@ const ArchitectureSection = () => {
                 
                 <div className="flow-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
                     <div className="flow-node">
-                        <FlowNode icon={Layout} title="Vibeo Client" desc="Local User Progress (Streaks/Watch Time)" color="137, 180, 250" delay={0.1} pulse={true} />
+                        <FlowNode icon={Layout} title="Joe4cast Client" desc="Local User Progress (Streaks/Watch Time)" color="137, 180, 250" delay={0.1} pulse={true} />
                     </div>
                     <div className="flow-path">
                         <FlowPath color="203, 166, 247" active={true} delay={0.3} />

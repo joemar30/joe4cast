@@ -72,7 +72,7 @@ const Leaderboard = () => {
                 <div className="title-section">
                     <Trophy className="trophy-icon" size={32} />
                     <h1>Global Hall of Vibe</h1>
-                    <p>The top 50 most active Vibeo viewers</p>
+                    <p>The top 50 most active Joe4cast viewers</p>
                 </div>
             </header>
 

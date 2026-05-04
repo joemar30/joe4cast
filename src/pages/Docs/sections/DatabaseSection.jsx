@@ -43,7 +43,7 @@ const DatabaseSection = () => {
             <div style={{ marginBottom: '40px' }}>
                 <h2 className="docs-heading">Database Schema</h2>
                 <p className="docs-subheading">
-                    Vibeo utilizes a NoSQL document database Architecture via <strong>Firebase Firestore</strong>. Instead of rigid SQL tables, data is stored in flexible Collections and Documents.
+                    Joe4cast utilizes a NoSQL document database Architecture via <strong>Firebase Firestore</strong>. Instead of rigid SQL tables, data is stored in flexible Collections and Documents.
                 </p>
                 <div style={{ display: 'flex', gap: '12px', marginTop: '24px', flexWrap: 'wrap' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#89b4fa', fontSize: '0.85rem', fontWeight: 600, background: 'rgba(137, 180, 250, 0.1)', padding: '8px 16px', borderRadius: '20px' }}>
@@ -117,7 +117,7 @@ const DatabaseSection = () => {
             <div style={{ marginTop: '80px', marginBottom: '40px' }}>
                 <h2 className="docs-heading">Relational Data (SQL)</h2>
                 <p className="docs-subheading">
-                    For global features like the <strong>Leaderboard</strong> and <strong>Compliance Tracking</strong>, Vibeo uses a relational <strong>PostgreSQL</strong> database hosted on Neon. This allows for complex aggregations and cross-user queries that are inefficient in NoSQL.
+                    For global features like the <strong>Leaderboard</strong> and <strong>Compliance Tracking</strong>, Joe4cast uses a relational <strong>PostgreSQL</strong> database hosted on Neon. This allows for complex aggregations and cross-user queries that are inefficient in NoSQL.
                 </p>
                 <div style={{ display: 'flex', gap: '12px', marginTop: '24px', flexWrap: 'wrap' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#f38ba8', fontSize: '0.85rem', fontWeight: 600, background: 'rgba(243, 139, 168, 0.1)', padding: '8px 16px', borderRadius: '20px' }}>

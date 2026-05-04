@@ -10,7 +10,7 @@ const PrivacyPolicy = () => {
 
                 <section>
                     <h2>1. Introduction</h2>
-                    <p>This Privacy Policy describes how Vibeo ("Service", "Platform", "we", "us", or "our") collects, uses, stores, and protects information obtained from users ("User", "you", "your") of the Platform. By using the Service, you consent to the data practices described in this policy.</p>
+                    <p>This Privacy Policy describes how Joe4cast ("Service", "Platform", "we", "us", or "our") collects, uses, stores, and protects information obtained from users ("User", "you", "your") of the Platform. By using the Service, you consent to the data practices described in this policy.</p>
                     <p>We are committed to safeguarding the privacy of our users. This policy applies to all information collected through our website, applications, and any related services, sales, marketing, or events (collectively, the "Services").</p>
                 </section>
 
@@ -142,7 +142,7 @@ const PrivacyPolicy = () => {
 
                 <section>
                     <h2>12. Limitation of Liability for Data</h2>
-                    <p>While we implement reasonable safeguards to protect your data, the Vibeo development team shall not be held liable for any unauthorized access, data breaches, or data loss resulting from:</p>
+                    <p>While we implement reasonable safeguards to protect your data, the Joe4cast development team shall not be held liable for any unauthorized access, data breaches, or data loss resulting from:</p>
                     <ul>
                         <li>Security vulnerabilities in third-party services (Google Firebase, TMDB, or others).</li>
                         <li>User negligence in protecting account credentials.</li>
@@ -160,7 +160,7 @@ const PrivacyPolicy = () => {
 
                 <section>
                     <h2>14. Contact Us</h2>
-                    <p>If you have any questions, concerns, or requests regarding this Privacy Policy, your personal data, or our data practices, please contact the Vibeo development team through our official GitHub repository at <a href="https://github.com/ADET-AI-Assistant/Vibeo" target="_blank" rel="noopener noreferrer">github.com/ADET-AI-Assistant/Vibeo</a>.</p>
+                    <p>If you have any questions, concerns, or requests regarding this Privacy Policy, your personal data, or our data practices, please contact the Joe4cast development team through our official GitHub repository at <a href="https://github.com/ADET-AI-Assistant/Joe4cast" target="_blank" rel="noopener noreferrer">github.com/ADET-AI-Assistant/Joe4cast</a>.</p>
                 </section>
             </main>
         </div>

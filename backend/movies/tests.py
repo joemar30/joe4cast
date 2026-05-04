@@ -4,7 +4,7 @@ from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 from .models import UserStat, WatchlistItem
 
-class VibeoAPITests(APITestCase):
+class Joe4castAPITests(APITestCase):
     def setUp(self):
         # Create a test user
         self.user = User.objects.create_user(username='testuser', password='password123')
@@ -21,7 +21,7 @@ class VibeoAPITests(APITestCase):
         data = {
             'username': 'newuser',
             'password': 'newpassword123',
-            'email': 'new@vibeo.com'
+            'email': 'new@joe4cast.com'
         }
         response = self.client.post(self.register_url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

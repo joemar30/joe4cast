@@ -8,9 +8,9 @@ from .views import RegisterView, LoginView, WatchlistViewSet, FavoriteViewSet, W
 # --- SWAGGER SETUP STARTS HERE ---
 schema_view = get_schema_view(
    openapi.Info(
-      title="Vibeo API",
+      title="Joe4cast API",
       default_version='v1',
-      description="Interactive API documentation for the Vibeo App",
+      description="Interactive API documentation for the Joe4cast App",
    ),
    public=True,
    permission_classes=[permissions.AllowAny],

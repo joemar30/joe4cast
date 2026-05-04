@@ -1,7 +1,7 @@
 /**
  * VibeyChat/index.jsx
  * ═══════════════════════════════════════════════════════════════
- * Vibey — Vibeo's AI chatbot assistant.
+ * Vibey — Joe4cast's AI chatbot assistant.
  * Floating action button + slide-up chat panel.
  * ═══════════════════════════════════════════════════════════════
  */

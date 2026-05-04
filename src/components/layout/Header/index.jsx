@@ -272,11 +272,11 @@ const Header = () => {
                 style={isMobileMenuOpen ? { position: 'fixed', width: '100%', top: 0 } : {}}
             >
             <div className="topbar__inner">
-                <button className="topbar__logo" onClick={() => navigate('/')} aria-label="Vibeo Home">
-                    <img src="/vibeo.png" alt="Vibeo" className="topbar__logo-img" />
+                <button className="topbar__logo" onClick={() => navigate('/')} aria-label="Joe4cast Home">
+                    <img src="/joe4cast.png" alt="Joe4cast" className="topbar__logo-img" />
                     <span className="topbar__logo-text">
-                        <span className="topbar__logo-vibe">Vibe</span>
-                        <span className="topbar__logo-reel">o</span>
+                        <span className="topbar__logo-vibe">Joe4</span>
+                        <span className="topbar__logo-reel">cast</span>
                     </span>
                 </button>
 

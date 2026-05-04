@@ -36,10 +36,10 @@ const AboutSection = () => {
 
             {/* Hero Card */}
             <div className="about-hero-card">
-                <div className="about-logo-icon" onClick={handleLogoClick} title="Vibeo Logo">
-                    <img src="/vibeo.png" alt="Vibeo Logo" className="vibeo-logo-img" />
+                <div className="about-logo-icon" onClick={handleLogoClick} title="Joe4cast Logo">
+                    <img src="/joe4cast.png" alt="Joe4cast Logo" className="joe4cast-logo-img" />
                 </div>
-                <h3>Vibeo</h3>
+                <h3>Joe4cast</h3>
                 <span className="about-version">v1.0.0</span>
 
                 <div className="tech-stack-pills">
@@ -52,10 +52,10 @@ const AboutSection = () => {
                 </div>
 
                 <div className="hero-actions">
-                    <a href="https://github.com/ADET-AI-Assistant/Vibeo" target="_blank" rel="noopener noreferrer" className="hero-btn btn-sponsor">
+                    <a href="https://github.com/ADET-AI-Assistant/Joe4cast" target="_blank" rel="noopener noreferrer" className="hero-btn btn-sponsor">
                         <Star size={16} className="btn-icon" /> Star Repo
                     </a>
-                    <a href="https://github.com/ADET-AI-Assistant/Vibeo" target="_blank" rel="noopener noreferrer" className="hero-btn btn-github">
+                    <a href="https://github.com/ADET-AI-Assistant/Joe4cast" target="_blank" rel="noopener noreferrer" className="hero-btn btn-github">
                         <Github size={16} className="btn-icon" /> GitHub
                     </a>
                 </div>
@@ -63,7 +63,7 @@ const AboutSection = () => {
 
             {/* Action Cards Row */}
             <div className="about-action-cards">
-                <a href="https://github.com/ADET-AI-Assistant/Vibeo/issues" target="_blank" rel="noopener noreferrer" className="action-card warning-card">
+                <a href="https://github.com/ADET-AI-Assistant/Joe4cast/issues" target="_blank" rel="noopener noreferrer" className="action-card warning-card">
                     <div className="card-content">
                         <h4><MessageSquareWarning size={16} /> Report an Issue</h4>
                         <p>Found a bug? Let us know!</p>
@@ -71,7 +71,7 @@ const AboutSection = () => {
                     <ArrowUpRight size={18} className="link-arrow" />
                 </a>
 
-                <a href="https://github.com/ADET-AI-Assistant/Vibeo/releases" target="_blank" rel="noopener noreferrer" className="action-card info-card">
+                <a href="https://github.com/ADET-AI-Assistant/Joe4cast/releases" target="_blank" rel="noopener noreferrer" className="action-card info-card">
                     <div className="card-content">
                         <h4><ListTree size={16} /> Changelog & Releases</h4>
                         <p>See what's new in v1.0.0</p>
@@ -85,7 +85,7 @@ const AboutSection = () => {
                 <div className="footer-section">
                     <h4>LINKS</h4>
                     <div className="social-links">
-                        <a href="https://github.com/ADET-AI-Assistant/Vibeo" target="_blank" rel="noopener noreferrer" className="social-icon" title="GitHub">
+                        <a href="https://github.com/ADET-AI-Assistant/Joe4cast" target="_blank" rel="noopener noreferrer" className="social-icon" title="GitHub">
                             <Github size={18} />
                         </a>
                     </div>

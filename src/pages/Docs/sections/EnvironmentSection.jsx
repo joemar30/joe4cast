@@ -131,7 +131,7 @@ const EnvironmentSection = () => {
                         <code style={{ color: '#f9e2af', whiteSpace: 'nowrap' }}>
                             python -m httpie POST http://localhost:8000/api/sync-stats/ \<br/>
                             firebase_uid="test_user" \<br/>
-                            username="VibeoTesting" \<br/>
+                            username="Joe4castTesting" \<br/>
                             total_watch_time:=45000 \<br/>
                             current_streak:=15
                         </code>
