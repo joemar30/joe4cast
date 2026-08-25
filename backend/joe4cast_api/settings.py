@@ -37,9 +37,10 @@ elif not SECRET_KEY:
     SECRET_KEY = 'django-insecure-fallback-key-for-local-dev-only'
 
 ALLOWED_HOSTS = [
-    '.vercel.app', 
-    'localhost', 
+    '.vercel.app',
+    'localhost',
     '127.0.0.1',
+    'joe4castv1.vercel.app',
     'joe4cast-stream.vercel.app',
     'joe4cast-stream.online',
     'www.joe4cast-stream.online'
@@ -208,6 +209,7 @@ SWAGGER_SETTINGS = {
 CORS_ALLOW_ALL_ORIGINS = True 
 CSRF_TRUSTED_ORIGINS = [
     'https://*.vercel.app',
+    'https://joe4castv1.vercel.app',
     'https://joe4cast-stream.vercel.app',
     'https://joe4cast-stream.online',
     'https://www.joe4cast-stream.online'
