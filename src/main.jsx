@@ -20,6 +20,13 @@ import App from './App';
 // Global styles – Tailwind CSS + custom design tokens
 import './styles/index.css';
 
+// PWA service worker (offline shell + install prompt)
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+
 // React Query
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
