@@ -12,6 +12,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 import { ThemeProvider } from './context/ThemeContext';
 import { LayoutProvider } from './context/LayoutContext';
@@ -51,6 +52,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <LayoutProvider>
               <App />
               <Analytics />
+              <SpeedInsights />
             </LayoutProvider>
           </ThemeProvider>
         </AuthProvider>
