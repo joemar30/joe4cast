@@ -154,7 +154,7 @@ const CookiePreferences = () => {
                 {/* ── Contact ── */}
                 <section>
                     <h2>Contact Us</h2>
-                    <p>If you have any questions about our use of cookies or this Cookie Policy, please contact the Joe4cast development team through our official GitHub repository at <a href="https://github.com/ADET-AI-Assistant/Joe4cast" target="_blank" rel="noopener noreferrer">github.com/ADET-AI-Assistant/Joe4cast</a>.</p>
+                    <p>If you have any questions about our use of cookies or this Cookie Policy, please contact the Joe4cast development team through our official GitHub repository at <a href="https://github.com/joemar30/joe4cast" target="_blank" rel="noopener noreferrer">github.com/joemar30/joe4cast</a>.</p>
                 </section>
             </main>
         </div>

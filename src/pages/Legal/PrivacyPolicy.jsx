@@ -160,7 +160,7 @@ const PrivacyPolicy = () => {
 
                 <section>
                     <h2>14. Contact Us</h2>
-                    <p>If you have any questions, concerns, or requests regarding this Privacy Policy, your personal data, or our data practices, please contact the Joe4cast development team through our official GitHub repository at <a href="https://github.com/ADET-AI-Assistant/Joe4cast" target="_blank" rel="noopener noreferrer">github.com/ADET-AI-Assistant/Joe4cast</a>.</p>
+                    <p>If you have any questions, concerns, or requests regarding this Privacy Policy, your personal data, or our data practices, please contact the Joe4cast development team through our official GitHub repository at <a href="https://github.com/joemar30/joe4cast" target="_blank" rel="noopener noreferrer">github.com/joemar30/joe4cast</a>.</p>
                 </section>
             </main>
         </div>
