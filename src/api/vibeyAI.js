@@ -22,7 +22,7 @@ const GROQ_MODELS = [
     'llama-3.1-8b-instant'
 ];
 const HF_MODEL = 'meta-llama/Llama-3.1-8B-Instruct';
-const GEMINI_MODEL = 'gemini-1.5-flash';
+const GEMINI_MODEL = import.meta.env.VITE_GEMINI_MODEL || 'gemini-2.5-flash';
 
 const TMDB_IMG_BASE = 'https://image.tmdb.org/t/p/w342';
 
