@@ -96,6 +96,52 @@
     background: #000;
 }
 
+/* Fullscreen toggle button (parent-side overlay) */
+.play-fullscreen-btn {
+    position: absolute;
+    top: 0.85rem;
+    right: 0.85rem;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    cursor: pointer;
+    opacity: 0;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: opacity 0.25s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.play-player-wrap:hover .play-fullscreen-btn,
+.play-fullscreen-btn:focus-visible,
+.play-fullscreen-btn--visible {
+    opacity: 1;
+}
+
+.play-fullscreen-btn:hover {
+    background: rgba(147, 51, 234, 0.9);
+    border-color: transparent;
+    transform: scale(1.08);
+}
+
+.play-fullscreen-btn:active {
+    transform: scale(0.94);
+}
+
+/* Fullscreen state — player fills the viewport */
+.play-player-wrap:fullscreen,
+.play-player-wrap:-webkit-full-screen {
+    width: 100vw;
+    height: 100vh;
+}
+
 .play-player-shimmer {
     position: absolute;
     inset: 0;

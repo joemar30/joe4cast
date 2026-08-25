@@ -38,6 +38,32 @@ const Play = () => {
     /* ── Tracking watch time ── */
     const watchStartTime = useRef(null);
 
+    /* ── Fullscreen state ── */
+    const playerWrapRef = useRef(null);
+    const [isFullscreen, setIsFullscreen] = useState(false);
+
+    useEffect(() => {
+        const onFsChange = () => setIsFullscreen(Boolean(document.fullscreenElement));
+        document.addEventListener('fullscreenchange', onFsChange);
+        return () => document.removeEventListener('fullscreenchange', onFsChange);
+    }, []);
+
+    const toggleFullscreen = useCallback(async () => {
+        const el = playerWrapRef.current;
+        if (!el) return;
+        try {
+            if (document.fullscreenElement) {
+                await document.exitFullscreen();
+            } else if (el.requestFullscreen) {
+                await el.requestFullscreen();
+            } else if (el.webkitRequestFullscreen) {
+                el.webkitRequestFullscreen();
+            }
+        } catch (err) {
+            console.error('Fullscreen failed:', err);
+        }
+    }, []);
+
     /* ── TV-only state ── */
     const [seasons, setSeasons] = useState([]);           // list of season objects from TMDB
     const [activeSeason, setActiveSeason] = useState(1);
@@ -217,7 +243,7 @@ const Play = () => {
 
                 {/* ── Player ── */}
                 <section className="play-player-section" aria-label={isTV ? 'Episode Player' : 'Movie Player'}>
-                    <div className="play-player-wrap">
+                    <div className={`play-player-wrap ${isFullscreen ? 'play-player-wrap--fullscreen' : ''}`} ref={playerWrapRef}>
                         {/* Loading shimmer */}
                         {!playerReady && !playerError && (
                             <div className="play-player-shimmer">
@@ -268,6 +294,33 @@ const Play = () => {
                                 onError={() => { setPlayerError(true); setPlayerReady(true); }}
                                 className={`play-iframe ${playerReady ? 'play-iframe--ready' : ''}`}
                             />
+                        )}
+
+                        {/* Fullscreen toggle (parent-side, works regardless of embed controls) */}
+                        {playerReady && !playerError && (
+                            <button
+                                type="button"
+                                className={`play-fullscreen-btn ${isFullscreen ? 'play-fullscreen-btn--visible' : ''}`}
+                                onClick={toggleFullscreen}
+                                aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+                                title={isFullscreen ? 'Exit fullscreen (Esc)' : 'Fullscreen'}
+                            >
+                                {isFullscreen ? (
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M8 3v3a2 2 0 0 1-2 2H3" />
+                                        <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
+                                        <path d="M3 16h3a2 2 0 0 1 2 2v3" />
+                                        <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
+                                    </svg>
+                                ) : (
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+                                        <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+                                        <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+                                        <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+                                    </svg>
+                                )}
+                            </button>
                         )}
                     </div>
                 </section>

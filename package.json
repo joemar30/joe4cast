@@ -1,15 +1,42 @@
 {
   "name": "joe4cast",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "main": "electron/main.cjs",
+  "description": "Joe4cast — AI movie mood-matching & streaming desktop app",
+  "author": "Joe4cast",
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "python backend/manage.py runserver",
     "client": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "app": "npm run build && electron .",
+    "app:build": "npm run build && electron-builder --win portable"
+  },
+  "build": {
+    "appId": "online.joe4cast.desktop",
+    "productName": "Joe4cast",
+    "directories": {
+      "output": "release",
+      "buildResources": "public"
+    },
+    "files": [
+      "electron/**",
+      "dist/**",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "icon": "public/joe4cast.png"
+    },
+    "portable": {
+      "artifactName": "Joe4cast-Portable-${version}.exe"
+    }
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
@@ -27,6 +54,8 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "concurrently": "^9.2.1",
+    "electron": "^44.0.0",
+    "electron-builder": "^26.15.3",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
