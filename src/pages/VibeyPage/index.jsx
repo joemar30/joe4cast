@@ -18,6 +18,7 @@ import {
     deleteChatById,
     autoTitleChat,
 } from '@/api/vibeyChatService';
+import { createPasteHandler } from '@/utils/pasteUtils';
 import WatchlistDropdown from '@/components/common/WatchlistDropdown';
 import TrailerModal from '@/components/common/TrailerModal';
 import {
@@ -181,6 +182,18 @@ const VibeyPage = () => {
         try {
             const response = await sendVibeyMessage(newHistory);
 
+            if (response.error) {
+                const errorMsg = {
+                    role: 'assistant',
+                    content: response.text,
+                    movies: [],
+                    timestamp: Date.now(),
+                };
+                setMessages(prev => [...prev, errorMsg]);
+                setIsTyping(false);
+                return;
+            }
+
             const vibeyMsg = {
                 role: 'assistant',
                 content: response.text,
@@ -223,7 +236,7 @@ const VibeyPage = () => {
             console.error('[VibeyPage] Send error:', err);
             const errorMsg = {
                 role: 'assistant',
-                content: 'Oops, something went wrong on my end. Try again! 😅',
+                content: err?.message || 'Oops, something went wrong on my end. Try again! 😅',
                 movies: [],
                 timestamp: Date.now(),
             };
@@ -273,6 +286,8 @@ const VibeyPage = () => {
             handleSend();
         }
     };
+
+    const handlePaste = createPasteHandler(setInput);
 
     const handleRenameKeyDown = (e) => {
         if (e.key === 'Enter') confirmRename(e);
@@ -507,6 +522,7 @@ const VibeyPage = () => {
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyDown={handleKeyDown}
+                                onPaste={handlePaste}
                                 disabled={isTyping}
                             />
                             <button

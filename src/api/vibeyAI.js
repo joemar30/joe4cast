@@ -19,12 +19,10 @@ const LOCAL_HF_API_KEY = import.meta.env.VITE_HF_API_KEY || import.meta.env.HUGG
 
 const GROQ_MODELS = [
     'llama-3.3-70b-versatile',
-    'llama-3.1-8b-instant',
-    'mixtral-8x7b-32768',
-    'llama3-70b-8192'
+    'llama-3.1-8b-instant'
 ];
 const HF_MODEL = 'meta-llama/Llama-3.1-8B-Instruct';
-const GEMINI_MODEL = import.meta.env.VITE_GEMINI_MODEL || 'gemini-1.5-flash';
+const GEMINI_MODEL = 'gemini-1.5-flash';
 
 const TMDB_IMG_BASE = 'https://image.tmdb.org/t/p/w342';
 
@@ -82,7 +80,7 @@ const parseVibeyResponse = (rawText) => {
             if (Array.isArray(parsed)) {
                 movieTitles = parsed;
             }
-        } catch (e) {
+        } catch {
             console.warn('[Vibey] Failed to parse movie block:', match[1]);
         }
     }
@@ -160,7 +158,24 @@ const queryGemini = async (messages) => {
             return text;
         }
     } catch (err) {
-        console.warn('[Vibey] Gemini error:', err.message);
+        console.error('[Vibey] Gemini error details:', {
+            message: err.message,
+            status: err.status,
+            stack: err.stack,
+            cause: err.cause,
+        });
+        if (err.message?.includes('fetch')) {
+            console.error('[Vibey] Gemini network failure — check internet connection.');
+        }
+        if (err.message?.includes('API key')) {
+            console.error('[Vibey] Invalid or expired Gemini API key. Check VITE_GEMINI_API_KEY in .env');
+        }
+        if (err.message?.includes('model') || err.message?.includes('Model')) {
+            console.error('[Vibey] Model not found. Current model:', GEMINI_MODEL);
+        }
+        if (err.message?.includes('image') || err.message?.includes('clipboard')) {
+            console.error('[Vibey] Image input not supported by this model. Conversation history may contain image data.');
+        }
     }
     return null;
 };
@@ -174,7 +189,10 @@ const queryGroq = async (messages) => {
             const headers = { 'Content-Type': 'application/json' };
 
             if (isLocalDev) {
-                if (!LOCAL_GROQ_API_KEY) return null;
+                if (!LOCAL_GROQ_API_KEY) {
+                    console.warn('[Vibey] Groq API key not configured.');
+                    return null;
+                }
                 headers['Authorization'] = `Bearer ${LOCAL_GROQ_API_KEY}`;
             }
 
@@ -193,6 +211,8 @@ const queryGroq = async (messages) => {
             });
 
             if (!response.ok) {
+                const errorText = await response.text();
+                console.warn(`[Vibey] Groq HTTP ${response.status} for ${model}:`, errorText);
                 if (response.status === 400 || response.status === 429) continue;
                 return null;
             }
@@ -201,7 +221,7 @@ const queryGroq = async (messages) => {
             const content = data.choices?.[0]?.message?.content;
             if (content) return content;
         } catch (err) {
-            console.warn(`[Vibey] Groq error with ${model}:`, err.message);
+            console.error(`[Vibey] Groq error with ${model}:`, err.message);
         }
     }
     return null;
@@ -215,7 +235,10 @@ const queryHuggingFace = async (messages) => {
         const headers = { 'Content-Type': 'application/json' };
 
         if (isLocalDev) {
-            if (!LOCAL_HF_API_KEY) return null;
+            if (!LOCAL_HF_API_KEY) {
+                console.warn('[Vibey] HuggingFace API key not configured.');
+                return null;
+            }
             headers['Authorization'] = `Bearer ${LOCAL_HF_API_KEY}`;
         }
 
@@ -233,11 +256,16 @@ const queryHuggingFace = async (messages) => {
             }),
         });
 
-        if (!response.ok) return null;
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.warn(`[Vibey] HuggingFace HTTP ${response.status}:`, errorText);
+            return null;
+        }
+
         const data = await response.json();
         return data.choices?.[0]?.message?.content || null;
     } catch (err) {
-        console.warn('[Vibey] HuggingFace error:', err.message);
+        console.error('[Vibey] HuggingFace error:', err.message);
         return null;
     }
 };
@@ -245,11 +273,39 @@ const queryHuggingFace = async (messages) => {
 // ── Public API ────────────────────────────────────────────────
 
 /**
+ * Sanitize conversation history to remove any non-text content (e.g., images)
+ * that might cause "model does not support image input" errors.
+ */
+const sanitizeHistory = (history) => {
+    if (!Array.isArray(history)) return [];
+    return history.map(msg => {
+        const sanitized = { role: msg.role, content: '' };
+        if (typeof msg.content === 'string') {
+            sanitized.content = msg.content;
+        } else if (Array.isArray(msg.content)) {
+            // Handle multi-part messages (text + images) - extract only text
+            sanitized.content = msg.content
+                .filter(part => part.text)
+                .map(part => part.text)
+                .join(' ');
+        } else if (msg.content && typeof msg.content === 'object') {
+            // Handle object content - try to extract text
+            sanitized.content = msg.content.text || JSON.stringify(msg.content);
+        } else {
+            sanitized.content = String(msg.content || '');
+        }
+        return sanitized;
+    }).filter(msg => msg.content.trim().length > 0);
+};
+
+/**
  * Send a message to Vibey with full conversation context.
  * @param {Array<{role: string, content: string}>} conversationHistory
  * @returns {Promise<{text: string, movies: Array}>}
  */
 export const sendVibeyMessage = async (conversationHistory) => {
+    // Sanitize history to prevent "model does not support image input" errors
+    const cleanHistory = sanitizeHistory(conversationHistory);
     // 0. Simulated Latency for Debugging
     const simLatency = localStorage.getItem('joe4cast-simlatency');
     if (simLatency === 'true') {
@@ -258,34 +314,39 @@ export const sendVibeyMessage = async (conversationHistory) => {
     }
 
     // 1. Check cache first
-    const cacheKey = getHistoryKey(conversationHistory);
+    const cacheKey = getHistoryKey(cleanHistory);
     if (aiCache.has(cacheKey)) {
         console.log('[Vibey] Returning cached response');
         return aiCache.get(cacheKey);
     }
 
     // 2. Try Gemini first (key already configured)
-    let rawResponse = await queryGemini(conversationHistory);
+    let rawResponse = await queryGemini(cleanHistory);
     let provider = 'gemini';
 
     // 3. Fallback to Groq
     if (!rawResponse) {
-        rawResponse = await queryGroq(conversationHistory);
+        rawResponse = await queryGroq(cleanHistory);
         provider = 'groq';
     }
 
     // 4. Fallback to HuggingFace
     if (!rawResponse) {
-        rawResponse = await queryHuggingFace(conversationHistory);
+        rawResponse = await queryHuggingFace(cleanHistory);
         provider = 'huggingface';
     }
 
     // 5. All providers failed
     if (!rawResponse) {
+        const errorMsg = hasVibeyProvider()
+            ? "Hmm, I'm having trouble connecting right now. Try again in a moment! 🔌"
+            : "I'm not configured yet! Add an AI API key to get me talking. 🤖";
+        console.error('[Vibey] All AI providers failed. Check console for details.');
         return {
-            text: "Hmm, I'm having trouble connecting right now. Try again in a moment! 🔌",
+            text: errorMsg,
             movies: [],
             provider: null,
+            error: true,
         };
     }
 

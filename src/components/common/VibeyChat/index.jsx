@@ -11,6 +11,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { sendVibeyMessage } from '@/api/vibeyAI';
 import { createChat, updateChatMessages, autoTitleChat } from '@/api/vibeyChatService';
+import { createPasteHandler } from '@/utils/pasteUtils';
 import { Sparkles, Send, X, Play, Eye, MessageCircle, Maximize2 } from 'lucide-react';
 import './styles.css';
 
@@ -94,6 +95,20 @@ const VibeyChat = () => {
         try {
             const response = await sendVibeyMessage(newHistory);
 
+            if (response.error) {
+                setMessages(prev => [
+                    ...prev,
+                    {
+                        role: 'assistant',
+                        content: response.text,
+                        movies: [],
+                        timestamp: Date.now(),
+                    },
+                ]);
+                setIsTyping(false);
+                return;
+            }
+
             // Add Vibey's response
             const vibeyMsg = {
                 role: 'assistant',
@@ -132,11 +147,12 @@ const VibeyChat = () => {
             }
         } catch (err) {
             console.error('[Vibey] Send error:', err);
+            const errorMsg = err?.message || 'Oops, something went wrong on my end. Try again! 😅';
             setMessages(prev => [
                 ...prev,
                 {
                     role: 'assistant',
-                    content: 'Oops, something went wrong on my end. Try again! 😅',
+                    content: errorMsg,
                     movies: [],
                     timestamp: Date.now(),
                 },
@@ -152,6 +168,8 @@ const VibeyChat = () => {
             handleSend();
         }
     };
+
+    const handlePaste = createPasteHandler(setInput);
 
     const handleChipClick = (text) => {
         handleSend(text);
@@ -323,6 +341,7 @@ const VibeyChat = () => {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
+                        onPaste={handlePaste}
                         disabled={isTyping}
                     />
                     <button
